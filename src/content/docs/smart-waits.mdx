@@ -1,0 +1,129 @@
+---
+title: Smart Waits
+description: The @cdat/utils Cdat class - every smart-wait helper your tests need to replace waitForTimeout.
+order: 6
+lang: en
+---
+import Callout from '../../components/mdx/Callout.astro';
+import CodeWithCopy from '../../components/mdx/CodeWithCopy.astro';
+import GithubLink from '../../components/mdx/GithubLink.astro';
+
+# Smart Waits
+
+The `Cdat` utility class wraps Playwright's locator API with helpers that **wait for the right condition** instead of an arbitrary number of milliseconds. It is the operational backbone of zero-`waitForTimeout`.
+
+## Install
+
+<CodeWithCopy lang="bash" code={`pnpm add -D @cdat/utils`} />
+
+Or copy [`packages/cdat-utils/src/Cdat.ts`](https://github.com/darco81/cdat-pattern/tree/main/packages/cdat-utils) directly into your repo if you prefer not to depend on a package.
+
+## Core API
+
+### `waitAndClick(locator, options?)`
+
+Waits for an element to be visible + enabled, then clicks. Replaces 90% of `await page.click()` calls.
+
+<CodeWithCopy lang="typescript" code={`await Cdat.waitAndClick(this.components.submitButton);
+
+// with options
+await Cdat.waitAndClick(this.components.submitButton, { timeout: 10_000 });`} />
+
+### `waitAndFill(locator, value, options?)`
+
+Waits for visible + clears + fills + verifies. Handles the "input not yet rendered" race.
+
+<CodeWithCopy lang="typescript" code={`await Cdat.waitAndFill(this.components.username, 'testuser');`} />
+
+### `waitForState(locator, state, options?)`
+
+Waits for a `LocatorState` enum value: `Visible`, `Hidden`, `Attached`, `Detached`. Returns `void`.
+
+<CodeWithCopy lang="typescript" code={`import { Cdat, LocatorState } from '@cdat/utils';
+
+await Cdat.waitForState(this.components.loader, LocatorState.Hidden);
+await Cdat.waitForState(this.components.dialog, LocatorState.Visible);`} />
+
+### `waitForText(locator, options?)`
+
+Waits for visible, returns `textContent`. Returns `Promise<string>`.
+
+<CodeWithCopy lang="typescript" code={`const message = await Cdat.waitForText(this.components.notification);
+expect(message).toContain('saved successfully');`} />
+
+### `checkState(locator, state, options?)`
+
+Like `waitForState` but **non-throwing** - returns `Promise<boolean>`. Use for conditional flows where the element may or may not be present.
+
+<CodeWithCopy lang="typescript" code={`if (await Cdat.checkState(this.components.cookieBanner, LocatorState.Visible)) {
+  await Cdat.waitAndClick(this.components.acceptCookiesButton);
+}`} />
+
+## Method reference
+
+| Method | Returns | Use when |
+|---|---|---|
+| `waitAndClick` | `void` | clicking a button/link |
+| `waitAndFill` | `void` | filling an input |
+| `waitAndSelect` | `void` | choosing a `<select>` option |
+| `waitAndCheck` | `void` | checkbox toggle |
+| `waitForState` | `void` | element should reach a specific state |
+| `checkState` | `boolean` | element may or may not be present |
+| `waitForText` | `string` | reading visible text |
+| `waitForCount` | `number` | element list reaches a target count |
+| `waitForUrl` | `void` | URL matches a pattern |
+
+Each method takes an optional `{ timeout, force, retry }` config object. Defaults are conservative (10s timeout, no force, 1 retry on assertion-style failures).
+
+## Default timeouts
+
+The utility exposes timeout constants:
+
+<CodeWithCopy lang="typescript" code={`Cdat.SHORT_TIMEOUT  // 2_000ms - quick UI state changes
+Cdat.DEFAULT_TIMEOUT // 10_000ms - most actions
+Cdat.LONG_TIMEOUT   // 30_000ms - page navigation, async data loads`} />
+
+Use named constants over magic numbers. If you find yourself reaching for a 60s timeout, you probably have a real bug, not a slow page.
+
+<Callout type="tip" title="Composing with Playwright primitives">
+  Cdat helpers are thin wrappers - when you need something exotic, drop down to `locator.waitFor()` directly. CDAT does not forbid Playwright APIs; it just provides better defaults for the 90% case.
+</Callout>
+
+## Common patterns
+
+### Wait, click, wait for the result
+
+<CodeWithCopy lang="typescript" code={`async addToCart(): Promise<void> {
+  await Cdat.waitAndClick(this.components.addToCartButton);
+  await Cdat.waitForState(this.components.cartBadge, LocatorState.Visible);
+}`} />
+
+### Conditional dismissal
+
+<CodeWithCopy lang="typescript" code={`async dismissOnboardingIfPresent(): Promise<void> {
+  if (await Cdat.checkState(this.components.onboardingModal, LocatorState.Visible)) {
+    await Cdat.waitAndClick(this.components.onboardingDismiss);
+  }
+}`} />
+
+### Reading and asserting separately
+
+<CodeWithCopy lang="typescript" code={`// actions.ts - gets the message
+async getOrderConfirmationNumber(): Promise<string> {
+  return Cdat.waitForText(this.components.orderConfirmation);
+}
+
+// test.ts - asserts on it
+test('order created', async ({ page }) => {
+  const actions = new CheckoutActions(page);
+  await actions.placeOrder(VALID_ORDER);
+  const orderNumber = await actions.getOrderConfirmationNumber();
+  expect(orderNumber).toMatch(/^ORD-\d{6}$/);
+});`} />
+
+## Next steps
+
+- [/docs/architecture](/docs/architecture) - how Smart Waits fit into the 4-layer model
+- [/docs/anti-patterns](/docs/anti-patterns) - what to avoid even with smart waits
+
+<GithubLink path="docs/SMART-WAITS.md" label="Read raw smart-waits doc on GitHub" />

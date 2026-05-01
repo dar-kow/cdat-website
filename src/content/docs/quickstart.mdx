@@ -1,0 +1,115 @@
+---
+title: Quickstart
+description: Get started with CDAT in 5 minutes - install Playwright, create the 4-file structure, run your first test.
+order: 1
+lang: en
+---
+import Callout from '../../components/mdx/Callout.astro';
+import CodeWithCopy from '../../components/mdx/CodeWithCopy.astro';
+import GithubLink from '../../components/mdx/GithubLink.astro';
+
+# Quickstart
+
+<Callout type="info" title="In this guide">
+  5-minute setup to run your first CDAT-structured Playwright test.
+  For the full reference, see [/docs/architecture](/docs/architecture).
+</Callout>
+
+## 1. Install Playwright + TypeScript
+
+<CodeWithCopy lang="bash" code={`npm init playwright@latest
+npm install -D typescript`} />
+
+This scaffolds a Playwright project with TypeScript already configured. Pick **chromium** as the default browser; CDAT works with all three but Chromium is the fastest dev loop.
+
+## 2. Create the CDAT structure
+
+CDAT is **vertical-slice + 4 files per feature**. There is no `pages/` folder. Tests organize by business capability, not by page hierarchy.
+
+<CodeWithCopy lang="text" code={`features/
+└── login/
+    ├── components.ts    # C - Locators only
+    ├── data.ts          # D - Types & fixtures
+    ├── actions.ts       # A - Business logic, NO assertions
+    └── test.ts          # T - Scenarios + assertions`} />
+
+The four file names are non-negotiable. Tooling (snippets, audits, ESLint rules) keys off them.
+
+## 3. Implement the layers
+
+**components.ts** - locators, no logic:
+
+<CodeWithCopy lang="typescript" code={`import type { Page, Locator } from '@playwright/test';
+
+export class LoginComponents {
+  readonly usernameInput: Locator;
+  readonly passwordInput: Locator;
+  readonly submitButton: Locator;
+
+  constructor(page: Page) {
+    this.usernameInput = page.getByLabel('Username');
+    this.passwordInput = page.getByLabel('Password');
+    this.submitButton  = page.getByRole('button', { name: 'Sign in' });
+  }
+}`} />
+
+**data.ts** - types + fixtures, never locators:
+
+<CodeWithCopy lang="typescript" code={`export interface LoginCredentials {
+  username: string;
+  password: string;
+}
+
+export const VALID_USER: LoginCredentials = {
+  username: 'testuser',
+  password: 'Password123!',
+};`} />
+
+**actions.ts** - business logic, **no assertions**:
+
+<CodeWithCopy lang="typescript" code={`import type { Page } from '@playwright/test';
+import { Cdat } from '@cdat/utils';
+import { LoginComponents } from './components';
+import type { LoginCredentials } from './data';
+
+export class LoginActions {
+  private readonly components: LoginComponents;
+
+  constructor(private readonly page: Page) {
+    this.components = new LoginComponents(page);
+  }
+
+  async login(credentials: LoginCredentials): Promise<void> {
+    await Cdat.waitAndFill(this.components.usernameInput, credentials.username);
+    await Cdat.waitAndFill(this.components.passwordInput, credentials.password);
+    await Cdat.waitAndClick(this.components.submitButton);
+  }
+}`} />
+
+**test.ts** - scenarios + assertions, the only place `expect()` lives:
+
+<CodeWithCopy lang="typescript" code={`import { test, expect } from '@playwright/test';
+import { LoginActions } from './actions';
+import { VALID_USER } from './data';
+
+test('Given valid credentials, When login, Then dashboard opens', async ({ page }) => {
+  const actions = new LoginActions(page);
+  await page.goto('/login');
+  await actions.login(VALID_USER);
+  await expect(page).toHaveURL(/dashboard/);
+});`} />
+
+## 4. Run the test
+
+<CodeWithCopy lang="bash" code={`npx playwright test`} />
+
+That's it. You now have a CDAT feature working end-to-end.
+
+## Next steps
+
+- Read [/docs/architecture](/docs/architecture) - full dependency rules and why each layer exists
+- Read [/docs/zero-rules](/docs/zero-rules) - the three principles that keep tests reliable
+- Browse [/examples/basic](/examples/basic) - the working version of the code above
+- Or copy the [`@cdat/utils`](https://github.com/darco81/cdat-pattern/tree/main/packages/cdat-utils) package and skip writing your own smart-wait helpers
+
+<GithubLink path="docs/ARCHITECTURE.md" label="Read raw architecture doc on GitHub" />
