@@ -1,0 +1,14 @@
+node_modules/
+npm-debug.log*
+pnpm-debug.log*
+dist/
+.astro/
+.env
+.env.local
+.env.production
+.DS_Store
+Thumbs.db
+.vscode/*
+!.vscode/extensions.json
+.idea/
+src/_generated/
