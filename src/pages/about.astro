@@ -1,0 +1,140 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+const PORTFOLIO_PRIMARY =
+  'https://portfolio.sdet.it?utm_source=cdat&utm_medium=about&utm_campaign=funnel_portfolio';
+const SERVICES_SECONDARY =
+  'https://sdet.it/services?utm_source=cdat&utm_medium=about&utm_campaign=funnel_services';
+---
+<BaseLayout
+  title="About - CDAT Pattern"
+  description="Who built CDAT Pattern? 18 months · 9 production systems · MIT-licensed open source."
+>
+  <article class="about-page">
+    <header class="about-header">
+      <h1>Who built CDAT Pattern?</h1>
+      <p class="about-lede">
+        CDAT was forged across 18 months of production work on 9 systems -
+        from B2B platforms to e-commerce, CRM, and logistics. Each new project
+        revealed friction in classic POM. Each iteration sharpened the 4 layers
+        and 3 zero-rules into the pattern published here.
+      </p>
+      <p class="about-lede about-lede-emphasis">
+        This isn't a thought experiment. It's a battle-tested architecture
+        that scales from 5-test prototypes to 500-test enterprise suites.
+      </p>
+    </header>
+
+    <section class="about-stats" aria-label="Author at a glance">
+      <ul role="list">
+        <li><strong>20+ years</strong> SDET experience</li>
+        <li><strong>9 production systems</strong> using CDAT</li>
+        <li><strong>AI tooling architect</strong></li>
+      </ul>
+    </section>
+
+    <section class="about-ctas" aria-label="Continue reading">
+      <a
+        href={PORTFOLIO_PRIMARY}
+        class="cta-primary"
+        rel="noopener"
+        data-plausible-event="cdat_funnel_about_portfolio_click"
+      >View full portfolio →</a>
+
+      <a
+        href={SERVICES_SECONDARY}
+        class="cta-secondary"
+        rel="noopener"
+        data-plausible-event="cdat_funnel_about_services_click"
+      >Need help with test architecture? →</a>
+    </section>
+  </article>
+</BaseLayout>
+
+<style>
+  .about-page {
+    max-width: 48rem;
+    margin: 0 auto;
+    padding: 4rem 1rem 5rem;
+    display: grid;
+    gap: 2.5rem;
+  }
+  .about-header h1 {
+    font-family: var(--font-mono);
+    font-size: clamp(2rem, 5vw, 2.75rem);
+    color: var(--color-primary-500);
+    margin: 0 0 1rem;
+    letter-spacing: -0.02em;
+  }
+  .about-lede {
+    font-family: var(--font-sans);
+    font-size: 1.0625rem;
+    line-height: 1.65;
+    color: #cfd8d4;
+    margin: 0 0 1rem;
+  }
+  .about-lede-emphasis {
+    color: var(--color-primary-300);
+  }
+  .about-stats ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+    font-family: var(--font-mono);
+    font-size: 0.95rem;
+    color: #cfd8d4;
+    border-top: 1px solid var(--color-primary-900);
+    border-bottom: 1px solid var(--color-primary-900);
+    padding: 1rem 0;
+  }
+  @media (min-width: 640px) {
+    .about-stats ul { grid-template-columns: repeat(3, 1fr); }
+  }
+  .about-stats strong {
+    color: var(--color-accent-500);
+    display: block;
+    font-size: 1.125rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .about-ctas {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+  @media (min-width: 640px) {
+    .about-ctas { flex-direction: row; flex-wrap: wrap; align-items: center; }
+  }
+  .cta-primary, .cta-secondary {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0.6rem 1rem;
+    border-radius: 4px;
+    font-family: var(--font-mono);
+    font-size: 0.95rem;
+    text-decoration: none;
+    border: 1px solid transparent;
+  }
+  .cta-primary {
+    background-color: var(--color-primary-500);
+    color: var(--color-gray-900);
+    border-color: var(--color-primary-500);
+    font-weight: 700;
+  }
+  .cta-primary:hover { background-color: var(--color-primary-300); }
+  .cta-secondary {
+    color: var(--color-accent-500);
+    border-color: var(--color-accent-500);
+    background: rgba(255, 176, 0, 0.06);
+  }
+  .cta-secondary:hover { background: rgba(255, 176, 0, 0.16); color: var(--color-accent-300); }
+
+  .cta-primary:focus-visible, .cta-secondary:focus-visible {
+    outline: 2px solid var(--color-accent-500);
+    outline-offset: 2px;
+  }
+</style>
