@@ -1,0 +1,232 @@
+---
+import { highlight } from '../lib/shiki';
+import { fetchPatternFile } from '../lib/fetch-pattern';
+
+interface Tab {
+  id: string;
+  label: string;
+  path: string;
+  fallback: string;
+}
+
+interface Props {
+  region?: string;
+  tabs?: Tab[];
+}
+
+const FALLBACK_COMPONENTS = `import type { Page, Locator } from '@playwright/test';
+
+export class LoginComponents {
+  readonly usernameInput: Locator;
+  readonly passwordInput: Locator;
+  readonly submitButton: Locator;
+  readonly errorMessage: Locator;
+
+  constructor(page: Page) {
+    this.usernameInput = page.getByLabel('Username');
+    this.passwordInput = page.getByLabel('Password');
+    this.submitButton = page.getByRole('button', { name: 'Sign in' });
+    this.errorMessage = page.locator('[data-testid="error"]');
+  }
+}`;
+
+const FALLBACK_DATA = `export interface LoginCredentials {
+  username: string;
+  password: string;
+}
+
+export const VALID_USER: LoginCredentials = {
+  username: 'testuser',
+  password: 'Password123!',
+};
+
+export const INVALID_USER: LoginCredentials = {
+  username: 'wrong',
+  password: 'wrong',
+};`;
+
+const FALLBACK_ACTIONS = `import type { Page } from '@playwright/test';
+import { Cdat } from '@cdat/utils';
+import { LoginComponents } from './components';
+import type { LoginCredentials } from './data';
+
+export class LoginActions {
+  private readonly components: LoginComponents;
+
+  constructor(private readonly page: Page) {
+    this.components = new LoginComponents(page);
+  }
+
+  async login(credentials: LoginCredentials): Promise<void> {
+    await Cdat.waitAndFill(this.components.usernameInput, credentials.username);
+    await Cdat.waitAndFill(this.components.passwordInput, credentials.password);
+    await Cdat.waitAndClick(this.components.submitButton);
+  }
+
+  async getErrorMessage(): Promise<string> {
+    return Cdat.waitForText(this.components.errorMessage);
+  }
+}`;
+
+const FALLBACK_TEST = `import { test, expect } from '@playwright/test';
+import { LoginActions } from './actions';
+import { VALID_USER, INVALID_USER } from './data';
+
+test.describe('Login Feature', () => {
+  let actions: LoginActions;
+
+  test.beforeEach(async ({ page }) => {
+    actions = new LoginActions(page);
+    await page.goto('/login');
+  });
+
+  test('Given valid credentials, When login, Then success', async ({ page }) => {
+    await actions.login(VALID_USER);
+    await expect(page).toHaveURL(/dashboard/);
+  });
+
+  test('Given invalid credentials, When login, Then error shown', async () => {
+    await actions.login(INVALID_USER);
+    const error = await actions.getErrorMessage();
+    expect(error).toContain('Invalid');
+  });
+});`;
+
+const DEFAULT_TABS: Tab[] = [
+  { id: 'components', label: 'components.ts', path: 'examples/basic/features/login/components.ts', fallback: FALLBACK_COMPONENTS },
+  { id: 'data',       label: 'data.ts',       path: 'examples/basic/features/login/data.ts',       fallback: FALLBACK_DATA },
+  { id: 'actions',    label: 'actions.ts',    path: 'examples/basic/features/login/actions.ts',    fallback: FALLBACK_ACTIONS },
+  { id: 'test',       label: 'test.ts',       path: 'examples/basic/features/login/test.ts',       fallback: FALLBACK_TEST },
+];
+
+const { region = 'CDAT example code', tabs = DEFAULT_TABS } = Astro.props;
+
+const renderedTabs = await Promise.all(
+  tabs.map(async (t) => {
+    const code = await fetchPatternFile(t.path, t.fallback);
+    const html = await highlight(code, 'typescript');
+    return { ...t, code, html };
+  })
+);
+---
+<div class="code-preview" role="region" aria-label={region}>
+  <div role="tablist" aria-label="Choose CDAT layer to view" class="cp-tablist">
+    {renderedTabs.map((t, i) => (
+      <button
+        type="button"
+        role="tab"
+        id={`tab-${t.id}`}
+        aria-controls={`panel-${t.id}`}
+        aria-selected={i === 0 ? 'true' : 'false'}
+        tabindex={i === 0 ? 0 : -1}
+        data-tab-id={t.id}
+        class:list={['cp-tab', { 'cp-tab-active': i === 0 }]}
+      >
+        {t.label}
+      </button>
+    ))}
+  </div>
+
+  {renderedTabs.map((t, i) => (
+    <div
+      role="tabpanel"
+      id={`panel-${t.id}`}
+      aria-labelledby={`tab-${t.id}`}
+      class="cp-panel"
+      hidden={i !== 0}
+    >
+      <button
+        type="button"
+        class="cp-copy"
+        aria-label={`Copy ${t.label} code to clipboard`}
+        data-copy-source={`source-${t.id}`}
+        data-plausible-event="cdat_code_copied"
+        data-tab={t.id}
+      >📋 Copy</button>
+      <div class="cp-source" id={`source-${t.id}`} data-raw={t.code} set:html={t.html} />
+    </div>
+  ))}
+</div>
+
+<script>
+  import '../scripts/tabs.ts';
+  import '../scripts/copy-button.ts';
+</script>
+
+<style>
+  .code-preview {
+    border: 1px solid rgba(0, 255, 65, 0.18);
+    border-radius: 8px;
+    background: rgba(0, 255, 65, 0.02);
+    overflow: hidden;
+  }
+  .cp-tablist {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0;
+    border-bottom: 1px solid rgba(0, 255, 65, 0.18);
+    background: rgba(0, 0, 0, 0.35);
+  }
+  .cp-tab {
+    appearance: none;
+    background: transparent;
+    color: var(--color-gray-500);
+    border: 0;
+    border-bottom: 2px solid transparent;
+    padding: 0.75rem 1rem;
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    cursor: pointer;
+    min-height: 44px;
+  }
+  .cp-tab:hover { color: var(--color-primary-300); }
+  .cp-tab:focus-visible {
+    outline: 2px solid var(--color-accent-500);
+    outline-offset: -2px;
+  }
+  .cp-tab[aria-selected='true'] {
+    color: var(--color-primary-500);
+    border-bottom-color: var(--color-primary-500);
+    background: rgba(0, 255, 65, 0.05);
+  }
+
+  .cp-panel {
+    position: relative;
+  }
+  .cp-panel[hidden] { display: none; }
+
+  .cp-copy {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    z-index: 2;
+    appearance: none;
+    background: var(--color-gray-900);
+    color: var(--color-primary-500);
+    border: 1px solid var(--color-primary-700);
+    border-radius: 4px;
+    padding: 0.25rem 0.6rem;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    cursor: pointer;
+    min-height: 44px;
+  }
+  .cp-copy:focus-visible {
+    outline: 2px solid var(--color-accent-500);
+    outline-offset: 2px;
+  }
+  .cp-copy[data-copied='true'] {
+    color: var(--color-accent-500);
+    border-color: var(--color-accent-500);
+  }
+
+  .cp-source :global(pre.shiki-pre) {
+    margin: 0;
+    border-radius: 0;
+    padding: 1rem 1.25rem;
+    overflow-x: auto;
+    font-size: 0.875rem;
+    line-height: 1.55;
+    max-height: 28rem;
+  }
+</style>
