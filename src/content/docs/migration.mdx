@@ -1,0 +1,101 @@
+---
+title: Migration from POM
+description: A 5-step playbook for converting an existing POM-based Playwright suite to CDAT, feature-by-feature.
+order: 4
+lang: en
+---
+import Callout from '../../components/mdx/Callout.astro';
+import CodeWithCopy from '../../components/mdx/CodeWithCopy.astro';
+import GithubLink from '../../components/mdx/GithubLink.astro';
+
+# Migration Guide
+
+You don't migrate a POM suite to CDAT in one big bang. You do it **feature-by-feature**, with old and new patterns coexisting until the last Page Object is gone.
+
+<Callout type="tip" title="The big idea">
+  A vertical-slice migration: pick one feature, write its CDAT version next to the existing POM, run both suites until you trust the new one, delete the old. Repeat.
+</Callout>
+
+## Step 1 — Pilot one feature (week 1)
+
+Pick a feature with **5–15 tests** that the team understands well. Login is a classic choice because it's small but exercises auth, forms, and assertions.
+
+Create the new structure:
+
+<CodeWithCopy lang="text" code={`features/
+└── login/
+    ├── components.ts
+    ├── data.ts
+    ├── actions.ts
+    └── test.ts`} />
+
+Run **both** old and new test suites in CI. The new suite proves CDAT works in your environment; the old suite stays as the safety net.
+
+## Step 2 — Lock in the smart-wait utility
+
+Add `@cdat/utils` (or copy the [Cdat class source](https://github.com/dar-kow/cdat-pattern/tree/main/packages/cdat-utils) directly):
+
+<CodeWithCopy lang="bash" code={`pnpm add -D @cdat/utils`} />
+
+Replace every `page.waitForTimeout()` in your existing tests with the appropriate smart-wait helper. This is the **highest-leverage** change you can make to your suite — flake usually drops 30–50% just from this.
+
+## Step 3 — Add ESLint guardrails
+
+<CodeWithCopy lang="json" code={`{
+  "rules": {
+    "@typescript-eslint/no-explicit-any": "warn",
+    "no-restricted-syntax": [
+      "warn",
+      {
+        "selector": "MemberExpression[property.name='waitForTimeout']",
+        "message": "Use Cdat smart waits instead"
+      }
+    ]
+  }
+}`} />
+
+Set both to `warn` initially so the team sees the violations during review without breaking the build. After 2 sprints of cleanup, promote to `error`.
+
+## Step 4 — Migrate features in priority order
+
+Order features by **flake rate** descending. The fix-this-flaky-feature project doubles as your migration project.
+
+Per-feature checklist:
+- [ ] Move locators from PageObject → `components.ts`
+- [ ] Move test data from inline strings → `data.ts` with proper types
+- [ ] Move user flows from PageObject methods → `actions.ts` (drop assertions)
+- [ ] Move scenarios + `expect()` → `test.ts`
+- [ ] Run both old and new tests in CI for one full sprint
+- [ ] Delete the old PageObject
+
+## Step 5 — Retire the `pages/` folder
+
+When the last feature has been migrated, delete `pages/`. Add an ESLint rule to forbid recreating it:
+
+<CodeWithCopy lang="json" code={`{
+  "rules": {
+    "no-restricted-imports": [
+      "error",
+      { "patterns": ["**/pages/**"] }
+    ]
+  }
+}`} />
+
+<Callout type="warn" title="Realistic timeline">
+  A 50-test POM suite is typically 2–4 weeks of part-time migration work. A 200-test suite is a quarter. Don't let leadership compress this — the cost of a botched migration (broken CI, blocked releases) outweighs any timeline pressure.
+</Callout>
+
+## Common migration pitfalls
+
+**Mixing patterns inside one feature.** If you start migrating Login but leave half the locators in the old PageObject, you've created a worse mess than either pure pattern. Finish the feature.
+
+**Re-using the old PageObject from new Actions.** Tempting, but defeats the purpose. Copy the locators into the new `components.ts` and delete the old PageObject when done.
+
+**Skipping data.ts because "it's just strings".** Hardcoded strings in tests are the #2 source of test debt (after `waitForTimeout`). Force the discipline now.
+
+## Next steps
+
+- [/docs/anti-patterns](/docs/anti-patterns) — common mistakes after migration
+- [/docs/smart-waits](/docs/smart-waits) — the Cdat utility API your migration depends on
+
+<GithubLink path="docs/MIGRATION-GUIDE.md" label="Read raw migration guide on GitHub" />

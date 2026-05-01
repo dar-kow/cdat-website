@@ -1,0 +1,127 @@
+---
+title: Zero Rules
+description: Three principles — no any, no waitForTimeout, no else — that make CDAT tests reliable.
+order: 3
+lang: en
+---
+import Callout from '../../components/mdx/Callout.astro';
+import CodeWithCopy from '../../components/mdx/CodeWithCopy.astro';
+import GithubLink from '../../components/mdx/GithubLink.astro';
+
+# Three Zero Rules
+
+CDAT enforces three "zero" rules. Each eliminates a category of test debt that compounds painfully past 100 tests.
+
+## Rule 1: Zero `any`
+
+Every function signature, every variable, every return type must be properly typed.
+
+<CodeWithCopy lang="typescript" code={`// ❌ bad
+async getProductData(): Promise<any> {
+  return await page.evaluate(() => fetch('/api/product').then(r => r.json()));
+}
+
+// later in test:
+const product = await actions.getProductData();
+console.log(product.proce); // typo, no type error, silent prod bug`} />
+
+<CodeWithCopy lang="typescript" code={`// ✅ good
+interface ProductData {
+  id: string;
+  name: string;
+  price: number;
+}
+
+async getProductData(): Promise<ProductData> {
+  return await page.evaluate(() => fetch('/api/product').then(r => r.json()));
+}`} />
+
+Enforce with ESLint:
+
+<CodeWithCopy lang="json" code={`{
+  "rules": {
+    "@typescript-eslint/no-explicit-any": "warn"
+  }
+}`} />
+
+<Callout type="tip" title="warn vs error">
+  Production audits show 3-of-5 teams keep this as `warn`, not `error`. The lint warning surfaces violations during code review without blocking CI for legitimate edge cases (third-party type holes, generic library wrappers). Pick `error` if you want a hard line; `warn` if you trust the review.
+</Callout>
+
+## Rule 2: Zero `page.waitForTimeout()`
+
+Hardcoded timeouts are the #1 source of flake. They fail on slow CI and waste time on fast machines.
+
+<CodeWithCopy lang="typescript" code={`// ❌ bad — flaky on CI, slow on dev
+await page.waitForTimeout(5000);
+await button.click();
+
+// ❌ also bad — same problem, masked
+await page.waitForTimeout(2000);
+await expect(loader).toBeHidden();`} />
+
+<CodeWithCopy lang="typescript" code={`// ✅ good — wait for the actual condition
+await Cdat.waitAndClick(button);
+
+// ✅ good — explicit state assertion
+await Cdat.waitForState(loader, LocatorState.Hidden);`} />
+
+The `Cdat` utility class provides smart-wait helpers that internally combine "wait for state" + "perform action" with proper retry semantics. See [/docs/smart-waits](/docs/smart-waits) for the full API.
+
+Enforce with a custom ESLint rule or grep pre-commit hook:
+
+<CodeWithCopy lang="bash" code={`# fail commit if waitForTimeout appears in features/
+git diff --cached --name-only | xargs grep -l 'waitForTimeout' && exit 1 || exit 0`} />
+
+## Rule 3: Zero `else`
+
+Use early returns. Nested if-else creates pyramids that obscure the happy path.
+
+<CodeWithCopy lang="typescript" code={`// ❌ bad — pyramid of doom
+if (user.isValid) {
+  if (user.hasPermission) {
+    if (user.balance > 0) {
+      processOrder(user);
+    } else {
+      throw new Error('Insufficient balance');
+    }
+  } else {
+    throw new Error('No permission');
+  }
+} else {
+  throw new Error('Invalid user');
+}`} />
+
+<CodeWithCopy lang="typescript" code={`// ✅ good — flat, every precondition explicit
+if (!user.isValid)         throw new Error('Invalid user');
+if (!user.hasPermission)   throw new Error('No permission');
+if (user.balance <= 0)     throw new Error('Insufficient balance');
+
+processOrder(user);`} />
+
+<Callout type="warn" title="Honest about adoption">
+  Production data across 9 systems shows `else` count ranges 9–45 per repo. "Zero `else`" is a strong guideline, not a hard law. Treat it as a code-review smell rather than a CI gate. Your reviewers should ask "could this be an early return?" but not block the merge if the nested form is genuinely clearer.
+</Callout>
+
+## Putting it together
+
+A CDAT-conformant Action:
+
+<CodeWithCopy lang="typescript" code={`async submitOrder(order: OrderData): Promise<OrderResult> {
+  if (!order.items.length) throw new Error('Empty cart');
+
+  await Cdat.waitAndFill(this.components.shippingName, order.name);
+  await Cdat.waitAndFill(this.components.shippingAddress, order.address);
+  await Cdat.waitAndClick(this.components.placeOrderButton);
+
+  return Cdat.waitForText(this.components.orderConfirmation);
+}`} />
+
+No `any`, no `waitForTimeout`, no `else`, every dependency explicit. **This is the bar.**
+
+## Next steps
+
+- [/docs/smart-waits](/docs/smart-waits) — full Cdat utility API reference
+- [/docs/anti-patterns](/docs/anti-patterns) — common mistakes catching teams
+
+<GithubLink path="docs/ZERO-RULES.md" label="Read raw zero-rules doc on GitHub" />

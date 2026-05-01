@@ -1,0 +1,105 @@
+---
+title: Architecture
+description: The 4 CDAT layers, dependency direction, and why each file exists.
+order: 2
+lang: en
+---
+import Callout from '../../components/mdx/Callout.astro';
+import CodeWithCopy from '../../components/mdx/CodeWithCopy.astro';
+import GithubLink from '../../components/mdx/GithubLink.astro';
+import CdatDiagram from '../../components/CdatDiagram.astro';
+
+# Architecture
+
+<Callout type="info" title="TL;DR">
+  CDAT splits a feature into **four files** with a strict dependency direction:
+  Components and Data have no dependencies; Actions consume both; Tests consume all three.
+</Callout>
+
+<CdatDiagram />
+
+## The four layers
+
+### Components — locators only
+
+`components.ts` exports a class whose **only** responsibility is to expose `Locator` objects. No clicks, no fills, no business logic — just selectors.
+
+This isolates the most volatile part of any UI test (the markup) into a single file per feature. When the team renames a button, you change one file.
+
+### Data — types + fixtures
+
+`data.ts` defines the TypeScript types your feature operates on, plus the test fixtures used by the rest of the layers. **No locators** here, **no Playwright imports**. Pure data and types.
+
+A second important rule: this file is **import-clean** for tests. You can read `data.ts` to understand what scenarios this feature covers without booting a browser.
+
+### Actions — business logic, no assertions
+
+`actions.ts` exports a class that uses Components + Data to perform user-level actions. `login(credentials)`, `addToCart(product)`, `submitOrder()`. These are verbs the business cares about.
+
+<Callout type="warn" title="The hardest discipline">
+  Actions **must not assert**. No `expect()`, no `throw new Error('not found')` for state checks. If you need to verify something, return the value (or a typed predicate) and let the test layer assert on it.
+</Callout>
+
+### Tests — scenarios + assertions
+
+`test.ts` is where Playwright `test()` calls live. It composes Actions, organizes scenarios with `describe`/`beforeEach`, and is the **only** layer allowed to call `expect()`.
+
+Test names follow Given/When/Then in plain English so non-engineers can read the suite.
+
+## Dependency rules
+
+```
+Components ──┐
+             ├──► Actions ──┐
+Data ────────┘              ├──► Tests
+Components ─────────────────┤
+Data ───────────────────────┘
+```
+
+- Components → nothing
+- Data → nothing
+- Actions → Components + Data
+- Tests → Components + Data + Actions
+
+Violations of this graph are the most common audit finding when teams adopt CDAT. ESLint can enforce it via `import/no-restricted-paths`.
+
+## Multi-feature organization
+
+For projects with many features, organize by domain:
+
+<CodeWithCopy lang="text" code={`features/
+├── login/
+│   ├── components.ts
+│   ├── data.ts
+│   ├── actions.ts
+│   └── test.ts
+├── cart/
+│   └── ...
+└── checkout/
+    └── ...`} />
+
+For nested flows (e.g., a 3-step checkout with cart, payment, confirmation), use sub-features:
+
+<CodeWithCopy lang="text" code={`features/
+└── purchase-flow/
+    ├── cart/{components,data,actions,test}.ts
+    ├── payment/{components,data,actions,test}.ts
+    └── confirmation/{components,data,actions,test}.ts`} />
+
+Each sub-feature is still a complete CDAT slice with all 4 files.
+
+## Why this works at scale
+
+Production audits across 9 systems showed three things:
+
+- **Locator changes don't ripple.** Markup changes touch one `components.ts`. Tests stay green when the UI evolves.
+- **Action composition replaces inheritance.** A new flow imports two existing Actions classes; no base class hierarchy to maintain.
+- **Onboarding is fast.** A new engineer reads `data.ts` to learn the domain, then `test.ts` for the scenarios. They never have to grok a 1000-line Page Object.
+
+## Next steps
+
+- [/docs/zero-rules](/docs/zero-rules) — three guardrails that make this hold up under load
+- [/docs/migration](/docs/migration) — converting an existing POM-based suite
+- [/docs/anti-patterns](/docs/anti-patterns) — the audit findings to avoid
+
+<GithubLink path="docs/ARCHITECTURE.md" label="Read raw architecture doc on GitHub" />

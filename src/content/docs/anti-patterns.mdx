@@ -1,0 +1,147 @@
+---
+title: Anti-patterns
+description: Eight common mistakes when adopting CDAT, drawn from production audits across 9 systems.
+order: 5
+lang: en
+---
+import Callout from '../../components/mdx/Callout.astro';
+import CodeWithCopy from '../../components/mdx/CodeWithCopy.astro';
+import GithubLink from '../../components/mdx/GithubLink.astro';
+
+# Anti-patterns
+
+Eight mistakes that show up when teams adopt CDAT, drawn from production audits across nine systems. None of these will break your build, but each one makes the suite harder to maintain over time.
+
+## 1. Locators in `actions.ts`
+
+<CodeWithCopy lang="typescript" code={`// ❌ bad
+async submit() {
+  await this.page.locator('button[type=submit]').click(); // locator inline
+}
+
+// ✅ good
+async submit() {
+  await Cdat.waitAndClick(this.components.submitButton);
+}`} />
+
+Locators belong in `components.ts`. If you put them in actions, you've collapsed two layers and lost the maintenance benefit.
+
+## 2. Assertions in `actions.ts`
+
+<CodeWithCopy lang="typescript" code={`// ❌ bad — actions assert
+async login(creds: LoginCredentials) {
+  await Cdat.waitAndFill(this.components.username, creds.username);
+  await Cdat.waitAndClick(this.components.submit);
+  expect(this.page).toHaveURL(/dashboard/); // wrong layer
+}
+
+// ✅ good — actions execute, tests assert
+// actions.ts
+async login(creds: LoginCredentials): Promise<void> {
+  await Cdat.waitAndFill(this.components.username, creds.username);
+  await Cdat.waitAndClick(this.components.submit);
+}
+
+// test.ts
+test('login succeeds', async ({ page }) => {
+  const actions = new LoginActions(page);
+  await actions.login(VALID_USER);
+  await expect(page).toHaveURL(/dashboard/);
+});`} />
+
+Actions return data; tests assert on it. This separation is what lets you reuse the same `login()` action in 30 tests.
+
+## 3. Hardcoded strings in `test.ts`
+
+<CodeWithCopy lang="typescript" code={`// ❌ bad
+test('login', async ({ page }) => {
+  await actions.login({ username: 'testuser', password: 'pw123' });
+  // ...
+});
+
+// ✅ good — fixtures live in data.ts
+test('login', async ({ page }) => {
+  await actions.login(VALID_USER);
+  // ...
+});`} />
+
+Test data has gravity. Hardcoded strings make refactors painful and obscure what scenario you're testing.
+
+## 4. `page.locator()` inside `test.ts`
+
+<CodeWithCopy lang="typescript" code={`// ❌ bad
+test('error shown on bad login', async ({ page }) => {
+  await actions.login(INVALID_USER);
+  const error = page.locator('[data-testid=error]'); // locator in test
+  await expect(error).toBeVisible();
+});
+
+// ✅ good — locator stays in components, test reads it via actions
+test('error shown on bad login', async ({ page }) => {
+  const actions = new LoginActions(page);
+  await actions.login(INVALID_USER);
+  await expect(actions.components.errorMessage).toBeVisible();
+});`} />
+
+Tests should never construct locators. They consume them via the Actions/Components hierarchy.
+
+## 5. `any` in fixtures
+
+<CodeWithCopy lang="typescript" code={`// ❌ bad
+export const TEST_DATA: any = { ... };
+
+// ✅ good
+interface TestData { ... }
+export const TEST_DATA: TestData = { ... };`} />
+
+`any` in `data.ts` is contagious — every consumer loses type safety.
+
+## 6. Page Objects + CDAT coexistence forever
+
+A failed migration. Half the features are CDAT, half are the old PageObject. The team re-debates conventions every sprint. Pick a deadline and finish.
+
+## 7. Sub-classed PageObjects ported as sub-classed Actions
+
+<CodeWithCopy lang="typescript" code={`// ❌ bad
+class CheckoutActions extends CartActions {
+  async checkout() { ... }
+}`} />
+
+CDAT favors **composition over inheritance**. If `CheckoutActions` needs cart behavior, inject `CartActions`:
+
+<CodeWithCopy lang="typescript" code={`// ✅ good
+class CheckoutActions {
+  private readonly cart: CartActions;
+  constructor(private readonly page: Page) {
+    this.cart = new CartActions(page);
+  }
+  async checkout(): Promise<void> {
+    await this.cart.addProduct(...);
+    await Cdat.waitAndClick(this.components.checkoutButton);
+  }
+}`} />
+
+## 8. Skipping `data.ts` for "trivial" features
+
+Even a single-test feature gets all 4 files. The convention exists so newcomers can predict the layout — bypassing it for "quick wins" creates exception cases that breed more exceptions.
+
+## Production audit findings
+
+Across nine systems, the failure modes ranked by frequency:
+
+| Rank | Anti-pattern | Audit hits |
+|---:|---|---:|
+| 1 | Hardcoded strings in tests | 5/9 |
+| 2 | `page.waitForTimeout()` calls | 4/9 |
+| 3 | Locators in actions | 3/9 |
+| 4 | `any` in data fixtures | 3/9 |
+| 5 | Assertions in actions | 2/9 |
+
+The first two account for ~70% of test debt. Fix those first.
+
+## Next steps
+
+- [/docs/migration](/docs/migration) — to clean these up systematically
+- [/docs/zero-rules](/docs/zero-rules) — guardrails that prevent #1, #2, and #5
+
+<GithubLink path="docs/BEST-PRACTICES.md" label="Read raw best-practices doc on GitHub" />
