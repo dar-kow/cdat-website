@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="180" height="20" role="img" aria-label="Built with CDAT Pattern">
+  <title>Built with CDAT Pattern</title>
+  <linearGradient id="b" x2="0" y2="100%">
+    <stop offset="0" stop-color="#bbb" stop-opacity=".1"/>
+    <stop offset="1" stop-opacity=".1"/>
+  </linearGradient>
+  <mask id="m"><rect width="180" height="20" rx="3" fill="#fff"/></mask>
+  <g mask="url(#m)">
+    <rect width="80" height="20" fill="#0a0e0d"/>
+    <rect x="80" width="100" height="20" fill="#00ff41"/>
+    <rect width="180" height="20" fill="url(#b)"/>
+  </g>
+  <g fill="#fff" text-anchor="middle" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="11">
+    <text x="40" y="14">built with</text>
+    <text x="130" y="14" fill="#0a0e0d" font-weight="bold">CDAT</text>
+  </g>
+</svg>

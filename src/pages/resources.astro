@@ -1,0 +1,177 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import CodeWithCopy from '../components/mdx/CodeWithCopy.astro';
+
+const BADGE_MARKDOWN = `[![Built with CDAT Pattern](https://cdat.sdet.it/badge.svg)](https://cdat.sdet.it)`;
+const BADGE_HTML = `<a href="https://cdat.sdet.it">
+  <img src="https://cdat.sdet.it/badge.svg" alt="Built with CDAT Pattern">
+</a>`;
+---
+<BaseLayout
+  title="Resources - CDAT Pattern"
+  description="VS Code snippets, feature template zip, and the Built-with-CDAT badge for your README."
+>
+  <article class="resources">
+    <header>
+      <h1>Developer Resources</h1>
+      <p>Three downloads to scaffold CDAT in any project.</p>
+    </header>
+
+    <section>
+      <h2>VS Code Snippets</h2>
+      <p>Four snippets - <code>cdat-components</code>, <code>cdat-data</code>, <code>cdat-actions</code>, <code>cdat-test</code> - to scaffold an entire feature in seconds.</p>
+
+      <p>
+        <a
+          href="/cdat-pattern.code-snippets"
+          download
+          class="download-btn"
+          data-plausible-event="cdat_snippets_download"
+        >📥 Download cdat-pattern.code-snippets</a>
+      </p>
+
+      <h3>Install</h3>
+      <ol>
+        <li>Open Command Palette (<kbd>⌘⇧P</kbd> on Mac, <kbd>Ctrl+Shift+P</kbd> on Windows/Linux)</li>
+        <li>Run <em>"Snippets: Configure User Snippets"</em></li>
+        <li>Choose <em>"New Global Snippets file…"</em></li>
+        <li>Name it <code>cdat-pattern.code-snippets</code></li>
+        <li>Paste the downloaded content</li>
+      </ol>
+
+      <h3>Usage</h3>
+      <p>In any <code>.ts</code> file, type the prefix and press <kbd>Tab</kbd>:</p>
+      <ul>
+        <li><code>cdat-components</code> → Components class</li>
+        <li><code>cdat-data</code> → Data types + fixtures</li>
+        <li><code>cdat-actions</code> → Actions class</li>
+        <li><code>cdat-test</code> → Test boilerplate</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Feature Template (zip)</h2>
+      <p>An empty CDAT folder ready to drop into your <code>features/</code> directory.</p>
+
+      <p>
+        <a
+          href="/cdat-template.zip"
+          download
+          class="download-btn"
+          data-plausible-event="cdat_template_download"
+        >📥 Download cdat-template.zip</a>
+      </p>
+
+      <h3>Usage</h3>
+      <CodeWithCopy lang="bash" code={`unzip cdat-template.zip
+mv basic-feature features/my-feature
+cd features/my-feature
+mv components.ts.template components.ts
+mv data.ts.template data.ts
+mv actions.ts.template actions.ts
+mv test.ts.template test.ts`} />
+    </section>
+
+    <section>
+      <h2>README Badge</h2>
+      <p>Show that your project uses CDAT.</p>
+
+      <div class="badge-preview">
+        <img src="/badge.svg" alt="Built with CDAT Pattern" width="180" height="20" />
+      </div>
+
+      <h3>Markdown</h3>
+      <CodeWithCopy lang="markdown" code={BADGE_MARKDOWN} />
+
+      <h3>HTML</h3>
+      <CodeWithCopy lang="html" code={BADGE_HTML} />
+    </section>
+  </article>
+</BaseLayout>
+
+<style>
+  .resources {
+    max-width: 56rem;
+    margin: 0 auto;
+    padding: 4rem 1rem 5rem;
+    color: #cfd8d4;
+  }
+  .resources header { margin-bottom: 3rem; text-align: center; }
+  .resources h1 {
+    font-family: var(--font-mono);
+    font-size: clamp(2rem, 5vw, 2.75rem);
+    color: var(--color-primary-500);
+    margin: 0 0 0.5rem;
+  }
+  .resources header p { color: #cfd8d4; margin: 0; }
+
+  .resources section {
+    margin: 3rem 0;
+    padding: 1.5rem 1.75rem;
+    border: 1px solid rgba(0, 255, 65, 0.18);
+    border-radius: 8px;
+    background: rgba(0, 255, 65, 0.02);
+  }
+  .resources h2 {
+    font-family: var(--font-mono);
+    color: var(--color-primary-500);
+    font-size: 1.5rem;
+    margin: 0 0 0.75rem;
+    border-bottom: 1px solid var(--color-primary-900);
+    padding-bottom: 0.5rem;
+  }
+  .resources h3 {
+    font-family: var(--font-mono);
+    font-size: 1rem;
+    color: var(--color-accent-500);
+    margin: 1.25rem 0 0.5rem;
+  }
+  .resources p { margin: 0.5rem 0 1rem; line-height: 1.55; }
+  .resources ul, .resources ol {
+    padding-left: 1.5rem;
+    margin: 0.5rem 0 1rem;
+  }
+  .resources li { margin: 0.25rem 0; }
+  .resources code {
+    font-family: var(--font-mono);
+    font-size: 0.9em;
+    background: rgba(0, 255, 65, 0.08);
+    padding: 0.1em 0.35em;
+    border-radius: 3px;
+    color: var(--color-primary-300);
+  }
+  .resources kbd {
+    font-family: var(--font-mono);
+    font-size: 0.8em;
+    background: var(--color-gray-900);
+    border: 1px solid var(--color-primary-700);
+    border-radius: 3px;
+    padding: 0.1em 0.4em;
+    color: var(--color-primary-300);
+  }
+  .download-btn {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0.6rem 1rem;
+    background-color: var(--color-primary-500);
+    color: var(--color-gray-900) !important;
+    border-radius: 4px;
+    font-family: var(--font-mono);
+    font-size: 0.95rem;
+    text-decoration: none;
+    font-weight: 700;
+  }
+  .download-btn:hover { background-color: var(--color-primary-300); }
+  .download-btn:focus-visible {
+    outline: 2px solid var(--color-accent-500);
+    outline-offset: 2px;
+  }
+  .badge-preview {
+    background: var(--color-gray-900);
+    border: 1px solid var(--color-primary-900);
+    border-radius: 4px;
+    padding: 1rem;
+    text-align: center;
+  }
+</style>

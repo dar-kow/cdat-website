@@ -1,0 +1,83 @@
+{
+  "CDAT Components": {
+    "scope": "typescript",
+    "prefix": "cdat-components",
+    "body": [
+      "import type { Page, Locator } from '@playwright/test';",
+      "",
+      "export class ${1:Feature}Components {",
+      "\treadonly ${2:element}: Locator;",
+      "",
+      "\tconstructor(page: Page) {",
+      "\t\tthis.${2:element} = page.${3:getByRole('button', { name: '$4' })};",
+      "\t}",
+      "}",
+      ""
+    ],
+    "description": "CDAT Components class boilerplate"
+  },
+  "CDAT Data": {
+    "scope": "typescript",
+    "prefix": "cdat-data",
+    "body": [
+      "export interface ${1:Feature}Data {",
+      "\t${2:field}: ${3:string};",
+      "}",
+      "",
+      "export const VALID_${4:DATA}: ${1:Feature}Data = {",
+      "\t${2:field}: '${5:value}',",
+      "};",
+      ""
+    ],
+    "description": "CDAT Data types + test data boilerplate"
+  },
+  "CDAT Actions": {
+    "scope": "typescript",
+    "prefix": "cdat-actions",
+    "body": [
+      "import type { Page } from '@playwright/test';",
+      "import { Cdat } from '@cdat/utils';",
+      "import { ${1:Feature}Components } from './components';",
+      "import type { ${1:Feature}Data } from './data';",
+      "",
+      "export class ${1:Feature}Actions {",
+      "\tprivate readonly components: ${1:Feature}Components;",
+      "",
+      "\tconstructor(private readonly page: Page) {",
+      "\t\tthis.components = new ${1:Feature}Components(page);",
+      "\t}",
+      "",
+      "\tasync ${2:performAction}(data: ${1:Feature}Data): Promise<void> {",
+      "\t\tawait Cdat.waitAndFill(this.components.${3:element}, data.${4:field});",
+      "\t}",
+      "}",
+      ""
+    ],
+    "description": "CDAT Actions class boilerplate"
+  },
+  "CDAT Test": {
+    "scope": "typescript",
+    "prefix": "cdat-test",
+    "body": [
+      "import { test, expect } from '@playwright/test';",
+      "import { ${1:Feature}Actions } from './actions';",
+      "import { VALID_${2:DATA} } from './data';",
+      "",
+      "test.describe('${1:Feature} Feature', () => {",
+      "\tlet actions: ${1:Feature}Actions;",
+      "",
+      "\ttest.beforeEach(async ({ page }) => {",
+      "\t\tactions = new ${1:Feature}Actions(page);",
+      "\t\tawait page.goto('/${3:path}');",
+      "\t});",
+      "",
+      "\ttest('Given ${4:precondition}, When ${5:action}, Then ${6:outcome}', async ({ page }) => {",
+      "\t\tawait actions.${7:performAction}(VALID_${2:DATA});",
+      "\t\tawait expect(page).toHaveURL(/${8:expected}/);",
+      "\t});",
+      "});",
+      ""
+    ],
+    "description": "CDAT Test boilerplate"
+  }
+}
