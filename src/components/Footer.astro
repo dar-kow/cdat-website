@@ -1,37 +1,123 @@
 ---
-const year = new Date().getFullYear();
-const portfolioUrl = 'https://portfolio.sdet.it?utm_source=cdat&utm_medium=footer&utm_campaign=funnel';
-const patternRepo = 'https://github.com/dar-kow/cdat-pattern';
+const currentYear = new Date().getFullYear();
+const PORTFOLIO_FOOTER =
+  'https://portfolio.sdet.it?utm_source=cdat&utm_medium=footer&utm_campaign=funnel_about';
+const PATTERN_REPO = 'https://github.com/dar-kow/cdat-pattern';
+const WEBSITE_REPO = 'https://github.com/dar-kow/cdat-website';
+const CONTACT_PORTFOLIO = 'https://portfolio.sdet.it/contact?subject=cdat-inquiry';
 ---
-<footer class="mt-16 border-t border-primary-900 bg-gray-900 py-10 font-mono text-sm">
-  <div class="mx-auto grid max-w-5xl gap-8 px-4 md:grid-cols-3">
-    <section>
-      <h2 class="text-primary-500 text-xs uppercase tracking-widest mb-3">Project</h2>
-      <ul class="space-y-2">
-        <li><a href={patternRepo} rel="noopener">View pattern source on GitHub →</a></li>
-        <li><a href="/docs">Documentation</a></li>
-        <li><a href="/examples">Examples</a></li>
+<footer class="site-footer">
+  <div class="footer-grid">
+    <section class="footer-col">
+      <h3>About</h3>
+      <p>Built by Dariusz Kowalski. AI-Powered Test Automation Architect.</p>
+      <a
+        href={PORTFOLIO_FOOTER}
+        class="funnel-cta"
+        rel="noopener"
+        data-plausible-event="cdat_funnel_footer_about_click"
+      >View full portfolio →</a>
+    </section>
+
+    <section class="footer-col">
+      <h3>Resources</h3>
+      <ul>
+        <li><a href="/docs/quickstart">Quickstart</a></li>
+        <li><a href="/docs/architecture">Architecture</a></li>
+        <li><a href="/examples/basic">Examples</a></li>
+        <li><a href="/resources">Resources</a></li>
+        <li>
+          <a
+            href={PATTERN_REPO}
+            target="_blank"
+            rel="noopener"
+            data-plausible-event="cdat_github_external_click"
+            data-location="footer"
+          >GitHub →</a>
+        </li>
       </ul>
     </section>
 
-    <section>
-      <h2 class="text-primary-500 text-xs uppercase tracking-widest mb-3">Author</h2>
-      <ul class="space-y-2">
-        <li><a href={portfolioUrl} rel="noopener">About author → portfolio.sdet.it</a></li>
-        <li><a href="/about">How CDAT started</a></li>
-      </ul>
-    </section>
-
-    <section>
-      <h2 class="text-primary-500 text-xs uppercase tracking-widest mb-3">Discoverability</h2>
-      <ul class="space-y-2">
-        <li><a href="/llms.txt">/llms.txt</a></li>
-        <li><a href="/sitemap.xml">/sitemap.xml</a></li>
+    <section class="footer-col">
+      <h3>Connect</h3>
+      <ul>
+        <li>
+          <a
+            href="https://www.linkedin.com/in/darius-kowalski"
+            target="_blank"
+            rel="noopener"
+          >LinkedIn</a>
+        </li>
+        <li><a href={CONTACT_PORTFOLIO} rel="noopener">Contact</a></li>
       </ul>
     </section>
   </div>
 
-  <div class="mx-auto mt-10 max-w-5xl border-t border-primary-900 px-4 pt-4 text-xs text-gray-500">
-    © {year} sdet.it · MIT licensed · Built with <a href="https://astro.build" rel="noopener">Astro</a>
+  <div class="footer-bottom">
+    <p>© {currentYear} sdet.it · MIT licensed · Built with <a href="https://astro.build" rel="noopener">Astro</a></p>
+    <p><a href={WEBSITE_REPO} rel="noopener">Source on GitHub</a></p>
   </div>
 </footer>
+
+<style>
+  .site-footer {
+    margin-top: 4rem;
+    border-top: 1px solid var(--color-primary-900);
+    background: var(--color-gray-900);
+    padding: 2.5rem 0 1.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+  }
+  .footer-grid {
+    max-width: 64rem;
+    margin: 0 auto;
+    padding: 0 1rem;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+  @media (min-width: 768px) {
+    .footer-grid { grid-template-columns: repeat(3, 1fr); }
+  }
+  .footer-col h3 {
+    color: var(--color-primary-500);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 0.75rem;
+    margin: 0 0 0.75rem;
+  }
+  .footer-col p {
+    color: #cfd8d4;
+    margin: 0 0 0.75rem;
+    line-height: 1.5;
+  }
+  .footer-col ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 0.5rem;
+  }
+  .footer-col a, .footer-col .funnel-cta {
+    color: var(--color-accent-500);
+    text-underline-offset: 0.2em;
+    min-height: 1.75rem;
+    display: inline-block;
+  }
+  .footer-col a:hover { color: var(--color-accent-300); }
+
+  .footer-bottom {
+    max-width: 64rem;
+    margin: 2rem auto 0;
+    padding: 1rem 1rem 0;
+    border-top: 1px solid var(--color-primary-900);
+    font-size: 0.75rem;
+    color: var(--color-gray-500);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.5rem;
+  }
+  .footer-bottom a { color: var(--color-gray-500); }
+  .footer-bottom a:hover { color: var(--color-primary-300); }
+</style>
