@@ -2,20 +2,32 @@
 import '../styles/global.css';
 import Nav from '../components/Nav.astro';
 import Footer from '../components/Footer.astro';
+import { WEBSITE_SCHEMA, PERSON_SCHEMA, SOFTWARE_SCHEMA, articleSchema } from '../lib/schemas';
+
+type ExtraSchema = 'person' | 'software' | 'article';
 
 interface Props {
   title?: string;
   description?: string;
   canonical?: string;
+  ogImage?: string;
+  schema?: ExtraSchema;
 }
 
 const {
   title = 'CDAT Pattern - 4-layer test architecture for Playwright',
-  description = 'Components-Data-Actions-Tests. Battle-tested across 5 production systems over 18 months.',
+  description = 'Components-Data-Actions-Tests. Battle-tested across 9 production systems over 18 months.',
   canonical,
+  ogImage,
+  schema,
 } = Astro.props;
 
-const canonicalUrl = canonical ?? new URL(Astro.url.pathname, Astro.site ?? 'https://cdat.sdet.it').toString();
+const siteUrl = Astro.site ?? new URL('https://cdat.sdet.it');
+const canonicalUrl = canonical ?? new URL(Astro.url.pathname, siteUrl).toString();
+
+const slug = Astro.url.pathname.replace(/^\/+|\/+$/g, '') || 'home';
+const ogPath = `/og/${slug.replace(/\//g, '-')}.png`;
+const ogUrl = ogImage ?? new URL(ogPath, siteUrl).toString();
 ---
 <!doctype html>
 <html lang="en">
@@ -29,12 +41,27 @@ const canonicalUrl = canonical ?? new URL(Astro.url.pathname, Astro.site ?? 'htt
 
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content={schema === 'article' ? 'article' : 'website'} />
     <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:image" content={ogUrl} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
 
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogUrl} />
+
+    <script type="application/ld+json" set:html={JSON.stringify(WEBSITE_SCHEMA)} />
+    {schema === 'person' && (
+      <script type="application/ld+json" set:html={JSON.stringify(PERSON_SCHEMA)} />
+    )}
+    {schema === 'software' && (
+      <script type="application/ld+json" set:html={JSON.stringify(SOFTWARE_SCHEMA)} />
+    )}
+    {schema === 'article' && (
+      <script type="application/ld+json" set:html={JSON.stringify(articleSchema({ title, description, url: canonicalUrl }))} />
+    )}
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
