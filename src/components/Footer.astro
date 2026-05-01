@@ -1,0 +1,37 @@
+---
+const year = new Date().getFullYear();
+const portfolioUrl = 'https://portfolio.sdet.it?utm_source=cdat&utm_medium=footer&utm_campaign=funnel';
+const patternRepo = 'https://github.com/dar-kow/cdat-pattern';
+---
+<footer class="mt-16 border-t border-primary-900 bg-gray-900 py-10 font-mono text-sm">
+  <div class="mx-auto grid max-w-5xl gap-8 px-4 md:grid-cols-3">
+    <section>
+      <h2 class="text-primary-500 text-xs uppercase tracking-widest mb-3">Project</h2>
+      <ul class="space-y-2">
+        <li><a href={patternRepo} rel="noopener">View pattern source on GitHub →</a></li>
+        <li><a href="/docs">Documentation</a></li>
+        <li><a href="/examples">Examples</a></li>
+      </ul>
+    </section>
+
+    <section>
+      <h2 class="text-primary-500 text-xs uppercase tracking-widest mb-3">Author</h2>
+      <ul class="space-y-2">
+        <li><a href={portfolioUrl} rel="noopener">About author → portfolio.sdet.it</a></li>
+        <li><a href="/about">How CDAT started</a></li>
+      </ul>
+    </section>
+
+    <section>
+      <h2 class="text-primary-500 text-xs uppercase tracking-widest mb-3">Discoverability</h2>
+      <ul class="space-y-2">
+        <li><a href="/llms.txt">/llms.txt</a></li>
+        <li><a href="/sitemap.xml">/sitemap.xml</a></li>
+      </ul>
+    </section>
+  </div>
+
+  <div class="mx-auto mt-10 max-w-5xl border-t border-primary-900 px-4 pt-4 text-xs text-gray-500">
+    © {year} sdet.it · MIT licensed · Built with <a href="https://astro.build" rel="noopener">Astro</a>
+  </div>
+</footer>
