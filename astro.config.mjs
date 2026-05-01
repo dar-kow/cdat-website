@@ -1,15 +1,19 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
-
 import tailwindcss from '@tailwindcss/vite';
-
 import mdx from '@astrojs/mdx';
+import sitemap from '@astrojs/sitemap';
 
 // https://astro.build/config
 export default defineConfig({
+  site: 'https://cdat.sdet.it',
   vite: {
-    plugins: [tailwindcss()]
+    plugins: [tailwindcss()],
   },
-
-  integrations: [mdx()]
+  integrations: [
+    mdx(),
+    sitemap({
+      filter: (page) => !page.includes('/og/'),
+    }),
+  ],
 });
