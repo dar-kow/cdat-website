@@ -1,0 +1,108 @@
+---
+const rows = [
+  { aspect: 'Organization',   pom: 'Per page',           screenplay: 'Per actor',                                        cdat: 'Per feature (vertical slice)' },
+  { aspect: 'Layers',         pom: 'Mixed (1-2)',        screenplay: '5+ (Actor, Task, Question, Ability, Interaction)', cdat: '4 separated (C/D/A/T)' },
+  { aspect: 'Locators home',  pom: 'Page Object class',  screenplay: 'Targets module',                                   cdat: 'components.ts (dedicated)' },
+  { aspect: 'Test data',      pom: 'Hardcoded in tests', screenplay: 'Question objects',                                 cdat: 'data.ts (typed)' },
+  { aspect: 'Assertions',     pom: 'Often in PO',        screenplay: 'Tasks may contain',                                cdat: 'Only in test.ts' },
+  { aspect: 'Learning curve', pom: 'Low',                screenplay: 'Steep',                                            cdat: 'Gentle' },
+  { aspect: 'Best for',       pom: 'Small projects',     screenplay: 'Enterprise BDD',                                   cdat: 'Any project size' },
+];
+---
+<section class="comparison" aria-labelledby="comparison-heading">
+  <header class="cmp-header">
+    <h2 id="comparison-heading">CDAT vs Classic POM vs Screenplay</h2>
+    <p>Apples-to-apples on the seven decisions that matter.</p>
+  </header>
+
+  <div class="cmp-table-wrap" role="region" aria-label="Comparison table - scrollable on mobile" tabindex="0">
+    <table class="cmp-table">
+      <thead>
+        <tr>
+          <th scope="col">Aspect</th>
+          <th scope="col">Classic POM</th>
+          <th scope="col">Screenplay</th>
+          <th scope="col" class="cmp-col-cdat">CDAT</th>
+        </tr>
+      </thead>
+      <tbody>
+        {rows.map((r) => (
+          <tr>
+            <th scope="row">{r.aspect}</th>
+            <td>{r.pom}</td>
+            <td>{r.screenplay}</td>
+            <td class="cmp-col-cdat">{r.cdat}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+
+  <p class="cmp-cta">
+    <a href="/docs/architecture">Learn more in /docs/architecture →</a>
+  </p>
+</section>
+
+<style>
+  .comparison {
+    max-width: 64rem;
+    margin: 4rem auto;
+    padding: 0 1rem;
+  }
+  .cmp-header { margin-bottom: 1.5rem; text-align: center; }
+  .cmp-header h2 {
+    font-family: var(--font-mono);
+    color: var(--color-primary-500);
+    font-size: clamp(1.5rem, 3.5vw, 2rem);
+    margin: 0 0 0.5rem;
+  }
+  .cmp-header p {
+    color: #cfd8d4;
+    margin: 0;
+  }
+
+  .cmp-table-wrap {
+    overflow-x: auto;
+    border: 1px solid rgba(0, 255, 65, 0.18);
+    border-radius: 8px;
+  }
+  .cmp-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    min-width: 36rem;
+  }
+  .cmp-table th, .cmp-table td {
+    padding: 0.75rem 1rem;
+    text-align: left;
+    border-bottom: 1px solid rgba(0, 255, 65, 0.1);
+    vertical-align: top;
+  }
+  .cmp-table thead th {
+    background: rgba(0, 0, 0, 0.4);
+    color: var(--color-primary-300);
+    font-weight: 600;
+  }
+  .cmp-table tbody th {
+    color: var(--color-gray-500);
+    font-weight: 500;
+    width: 12rem;
+  }
+  .cmp-table tbody td { color: #cfd8d4; }
+  .cmp-col-cdat {
+    background: rgba(0, 255, 65, 0.05);
+    color: var(--color-primary-300) !important;
+    border-left: 2px solid var(--color-primary-500);
+    border-right: 2px solid var(--color-primary-500);
+    font-weight: 500;
+  }
+  .cmp-table tbody tr:last-child td { border-bottom: 0; }
+
+  .cmp-cta {
+    text-align: center;
+    margin: 1.5rem 0 0;
+    font-family: var(--font-mono);
+    font-size: 0.95rem;
+  }
+</style>

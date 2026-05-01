@@ -1,0 +1,67 @@
+---
+import CodePreviewTabs from '../components/CodePreviewTabs.astro';
+---
+<section class="code-preview-section" aria-labelledby="code-preview-heading">
+  <header class="cps-header">
+    <h2 id="code-preview-heading">See the 4 layers in real code</h2>
+    <p>
+      A working login feature, exactly as it lives in the
+      <a href="https://github.com/darco81/cdat-pattern/tree/main/examples/basic" rel="noopener">cdat-pattern</a>
+      repository. Switch tabs, copy code, drop it into your project.
+    </p>
+  </header>
+
+  <CodePreviewTabs region="CDAT login example code" />
+
+  <div class="cps-why">
+    <h3>Why split into 4 files?</h3>
+    <ul>
+      <li><strong>Separation of concerns</strong> - locators, data, behavior, and assertions never share a file.</li>
+      <li><strong>Dependency direction</strong> - Components and Data have zero dependencies; Actions consume both; Tests consume all three.</li>
+      <li><strong>Reusability</strong> - Actions can compose other Actions, locators can be shared, data fixtures stay typed.</li>
+    </ul>
+  </div>
+</section>
+<style>
+  .code-preview-section {
+    max-width: 64rem;
+    margin: 4rem auto;
+    padding: 0 1rem;
+  }
+  .cps-header { margin-bottom: 1.5rem; }
+  .cps-header h2 {
+    font-family: var(--font-mono);
+    color: var(--color-primary-500);
+    font-size: clamp(1.5rem, 3.5vw, 2rem);
+    margin: 0 0 0.5rem;
+  }
+  .cps-header p {
+    color: #cfd8d4;
+    line-height: 1.5;
+    margin: 0;
+    max-width: 42rem;
+  }
+  .cps-why {
+    margin-top: 2.5rem;
+    background: rgba(0, 255, 65, 0.03);
+    border: 1px solid rgba(0, 255, 65, 0.15);
+    border-radius: 8px;
+    padding: 1.25rem 1.5rem;
+  }
+  .cps-why h3 {
+    font-family: var(--font-mono);
+    color: var(--color-accent-500);
+    margin: 0 0 0.75rem;
+    font-size: 1.1rem;
+  }
+  .cps-why ul {
+    margin: 0;
+    padding-left: 1.25rem;
+    color: #cfd8d4;
+    line-height: 1.6;
+  }
+  .cps-why strong {
+    color: var(--color-primary-300);
+    font-weight: 600;
+  }
+</style>
