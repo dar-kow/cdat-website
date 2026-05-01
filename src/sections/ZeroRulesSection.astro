@@ -1,0 +1,106 @@
+---
+import ZeroRuleCard from '../components/ZeroRuleCard.astro';
+
+const ANY_BAD = `async getProductData(): Promise<any> {
+  return await page.evaluate(() => fetch('/api/product').then((r) => r.json()));
+}`;
+
+const ANY_GOOD = `interface ProductData {
+  id: string;
+  price: number;
+  name: string;
+}
+
+async getProductData(): Promise<ProductData> {
+  return await page.evaluate(() => fetch('/api/product').then((r) => r.json()));
+}`;
+
+const TIMEOUT_BAD = `await page.waitForTimeout(5000);
+await button.click();`;
+
+const TIMEOUT_GOOD = `await Cdat.waitAndClick(button);`;
+
+const ELSE_BAD = `if (user.isValid) {
+  if (user.hasPermission) {
+    processOrder(user);
+  } else {
+    throw new Error('No permission');
+  }
+} else {
+  throw new Error('Invalid user');
+}`;
+
+const ELSE_GOOD = `if (!user.isValid) throw new Error('Invalid user');
+if (!user.hasPermission) throw new Error('No permission');
+processOrder(user);`;
+---
+<section class="zero-rules" aria-labelledby="zero-rules-heading">
+  <header class="zr-section-header">
+    <h2 id="zero-rules-heading">Three Zero Rules</h2>
+    <p>
+      Three bright lines that keep tests reliable, readable, and maintainable.
+      Toggle each card to compare bad versus good code.
+    </p>
+  </header>
+
+  <div class="zr-grid">
+    <ZeroRuleCard
+      rule="any"
+      title="Type Safety Without Compromise"
+      badCode={ANY_BAD}
+      goodCode={ANY_GOOD}
+      explanation="TypeScript any defeats the entire purpose of type checking. ESLint rule @typescript-eslint/no-explicit-any enforced. Every function signature must specify its return type. Generics over any, always."
+    />
+    <ZeroRuleCard
+      rule="waitForTimeout"
+      title="Smart Waits Only"
+      badCode={TIMEOUT_BAD}
+      goodCode={TIMEOUT_GOOD}
+      explanation="Hardcoded delays are flaky and slow. They fail on slow CI, succeed on fast dev machines, and waste time when elements load fast. Smart waits target the actual condition, not arbitrary time."
+    />
+    <ZeroRuleCard
+      rule="else"
+      title="Early Returns Over Pyramids"
+      badCode={ELSE_BAD}
+      goodCode={ELSE_GOOD}
+      explanation="Nested if-else creates pyramids of indentation that obscure logic flow. Early returns flatten the code, making each precondition explicit and the happy path obvious."
+    />
+  </div>
+</section>
+
+<script>
+  import '../scripts/zero-rule-toggle.ts';
+</script>
+
+<style>
+  .zero-rules {
+    max-width: 64rem;
+    margin: 4rem auto;
+    padding: 0 1rem;
+  }
+  .zr-section-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+  }
+  .zr-section-header h2 {
+    font-family: var(--font-mono);
+    color: var(--color-primary-500);
+    font-size: clamp(1.75rem, 4vw, 2.25rem);
+    margin: 0 0 0.75rem;
+    letter-spacing: -0.01em;
+  }
+  .zr-section-header p {
+    color: #cfd8d4;
+    margin: 0 auto;
+    max-width: 36rem;
+    line-height: 1.55;
+  }
+  .zr-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  @media (min-width: 1024px) {
+    .zr-grid { grid-template-columns: repeat(3, 1fr); }
+  }
+</style>

@@ -1,0 +1,154 @@
+---
+import { highlight } from '../lib/shiki';
+
+interface Props {
+  rule: 'any' | 'waitForTimeout' | 'else';
+  title: string;
+  badCode: string;
+  goodCode: string;
+  explanation: string;
+}
+
+const { rule, title, badCode, goodCode, explanation } = Astro.props;
+const badHtml = await highlight(badCode, 'typescript');
+const goodHtml = await highlight(goodCode, 'typescript');
+const cardId = `zero-rule-${rule}`;
+const toggleId = `${cardId}-toggle`;
+---
+<article class="zero-rule-card" data-rule={rule} data-state="bad" id={cardId}>
+  <header class="zr-header">
+    <span class="zr-badge">Zero <code>{rule === 'waitForTimeout' ? 'waitForTimeout' : rule}</code></span>
+    <h3 class="zr-title">{title}</h3>
+  </header>
+
+  <div class="zr-toggle-wrap">
+    <button
+      type="button"
+      role="switch"
+      aria-checked="false"
+      aria-controls={`${cardId}-bad ${cardId}-good`}
+      aria-label={`Toggle to good example for Zero ${rule}`}
+      data-plausible-event="cdat_zero_rule_toggled"
+      data-rule={rule}
+      class="zr-toggle"
+      id={toggleId}
+    >
+      <span class="zr-pill zr-pill-bad" aria-hidden="true">❌ Bad</span>
+      <span class="zr-pill zr-pill-good" aria-hidden="true">✅ Good</span>
+    </button>
+  </div>
+
+  <div class="zr-code-pane">
+    <div class="zr-code zr-code-bad" data-shown="true" id={`${cardId}-bad`} set:html={badHtml} />
+    <div class="zr-code zr-code-good" data-shown="false" id={`${cardId}-good`} set:html={goodHtml} />
+  </div>
+
+  <p class="zr-explanation">{explanation}</p>
+</article>
+
+<style>
+  .zero-rule-card {
+    border: 1px solid rgba(0, 255, 65, 0.2);
+    border-radius: 8px;
+    background: rgba(0, 255, 65, 0.02);
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .zero-rule-card[data-state='good'] {
+    border-color: var(--color-primary-500);
+  }
+  .zero-rule-card[data-state='bad'] {
+    border-color: rgba(239, 68, 68, 0.4);
+  }
+
+  .zr-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.5rem 1rem;
+  }
+  .zr-badge {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-accent-500);
+    border: 1px solid var(--color-accent-700);
+    padding: 0.25rem 0.5rem;
+    border-radius: 3px;
+  }
+  .zr-badge code {
+    font-family: inherit;
+    color: inherit;
+  }
+  .zr-title {
+    font-family: var(--font-mono);
+    font-size: 1.25rem;
+    margin: 0;
+    color: var(--color-primary-500);
+  }
+
+  .zr-toggle-wrap { display: flex; }
+  .zr-toggle {
+    appearance: none;
+    background: var(--color-gray-900);
+    border: 1px solid var(--color-primary-700);
+    border-radius: 999px;
+    padding: 0.25rem;
+    display: inline-flex;
+    cursor: pointer;
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    min-height: 44px;
+    color: inherit;
+    align-items: center;
+  }
+  .zr-toggle:focus-visible {
+    outline: 2px solid var(--color-accent-500);
+    outline-offset: 2px;
+  }
+  .zr-pill {
+    padding: 0.4rem 0.85rem;
+    border-radius: 999px;
+    transition: background-color 120ms ease, color 120ms ease;
+  }
+  .zero-rule-card[data-state='bad'] .zr-pill-bad {
+    background: rgba(239, 68, 68, 0.18);
+    color: #ffb4b4;
+  }
+  .zero-rule-card[data-state='good'] .zr-pill-good {
+    background: rgba(0, 255, 65, 0.2);
+    color: var(--color-primary-300);
+  }
+
+  .zr-code-pane {
+    position: relative;
+    min-height: 7rem;
+  }
+  .zr-code {
+    transition: opacity 150ms ease;
+  }
+  .zr-code[data-shown='false'] {
+    display: none;
+  }
+  .zr-code :global(pre.shiki-pre) {
+    border-radius: 6px;
+    padding: 1rem 1.25rem;
+    overflow-x: auto;
+    font-size: 0.875rem;
+    line-height: 1.5;
+  }
+
+  .zr-explanation {
+    color: #cfd8d4;
+    font-size: 0.95rem;
+    line-height: 1.55;
+    margin: 0;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .zr-pill, .zr-code { transition: none; }
+  }
+</style>

@@ -1,0 +1,160 @@
+---
+const systems = [
+  { name: 'B2B Platform A',         icon: '🏢', loc: '12K', tests: '340', age: 14 },
+  { name: 'E-commerce 1',           icon: '🛒', loc: '18K', tests: '520', age: 18 },
+  { name: 'CRM Application',        icon: '📇', loc: '9K',  tests: '280', age: 12 },
+  { name: 'Event Management',       icon: '📅', loc: '7K',  tests: '210', age: 10 },
+  { name: 'Education Platform',     icon: '🎓', loc: '11K', tests: '350', age: 15 },
+  { name: 'Invoicing System',       icon: '🧾', loc: '6K',  tests: '180', age: 11 },
+  { name: 'Logistics App',          icon: '🚚', loc: '14K', tests: '410', age: 16 },
+  { name: 'Automotive Wholesale',   icon: '🚗', loc: '13K', tests: '380', age: 13 },
+  { name: 'B2B Platform B',         icon: '🏛️', loc: '10K', tests: '300', age: 9  },
+] as const;
+
+const dontDoList = [
+  'any types',
+  'page.waitForTimeout()',
+  'else clauses',
+  'page.locator() in tests',
+  'Hardcoded strings in tests',
+  'Mixing assertions in actions',
+] as const;
+---
+<section class="production-proof" aria-labelledby="proof-heading">
+  <header class="pp-header">
+    <h2 id="proof-heading">9 production systems. 18 months. Zero regrets.</h2>
+    <p>
+      CDAT has shipped tests across nine domains. Categories below are the
+      pattern's home turf - anonymized, but real.
+    </p>
+  </header>
+
+  <ul class="systems-grid" role="list">
+    {systems.map((s) => (
+      <li class="system-card">
+        <span class="system-icon" aria-hidden="true">{s.icon}</span>
+        <h3 class="system-name">{s.name}</h3>
+        <ul class="system-stats" role="list">
+          <li><strong>{s.loc}</strong> LOC</li>
+          <li><strong>{s.tests}</strong> tests</li>
+          <li><strong>{s.age}</strong> months</li>
+        </ul>
+      </li>
+    ))}
+  </ul>
+
+  <aside class="dont-do" aria-labelledby="dont-do-heading">
+    <h3 id="dont-do-heading">What we don't do</h3>
+    <ul role="list">
+      {dontDoList.map((item) => (
+        <li><s>{item}</s></li>
+      ))}
+    </ul>
+  </aside>
+</section>
+
+<style>
+  .production-proof {
+    max-width: 64rem;
+    margin: 4rem auto;
+    padding: 0 1rem;
+  }
+  .pp-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+  }
+  .pp-header h2 {
+    font-family: var(--font-mono);
+    color: var(--color-primary-500);
+    font-size: clamp(1.5rem, 3.5vw, 2rem);
+    margin: 0 0 0.5rem;
+    line-height: 1.2;
+  }
+  .pp-header p {
+    color: #cfd8d4;
+    margin: 0 auto;
+    max-width: 38rem;
+    line-height: 1.5;
+  }
+
+  .systems-grid {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 3rem;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  @media (min-width: 640px) {
+    .systems-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (min-width: 1024px) {
+    .systems-grid { grid-template-columns: repeat(3, 1fr); }
+  }
+
+  .system-card {
+    border: 1px solid rgba(0, 255, 65, 0.18);
+    border-radius: 6px;
+    padding: 1rem 1.25rem;
+    background: rgba(0, 255, 65, 0.02);
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .system-icon {
+    font-size: 1.5rem;
+    line-height: 1;
+  }
+  .system-name {
+    font-family: var(--font-mono);
+    font-size: 1rem;
+    margin: 0;
+    color: var(--color-primary-300);
+  }
+  .system-stats {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 1rem;
+    font-family: var(--font-mono);
+    font-size: 0.825rem;
+    color: var(--color-gray-500);
+  }
+  .system-stats strong {
+    color: var(--color-accent-500);
+    font-weight: 600;
+  }
+
+  .dont-do {
+    border-top: 1px solid var(--color-primary-900);
+    padding-top: 2rem;
+  }
+  .dont-do h3 {
+    font-family: var(--font-mono);
+    font-size: 1.25rem;
+    color: var(--color-accent-500);
+    margin: 0 0 1rem;
+  }
+  .dont-do ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.95rem;
+  }
+  @media (min-width: 640px) {
+    .dont-do ul { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (min-width: 1024px) {
+    .dont-do ul { grid-template-columns: repeat(3, 1fr); }
+  }
+  .dont-do li s {
+    color: #f87171;
+    text-decoration-thickness: 2px;
+  }
+</style>
