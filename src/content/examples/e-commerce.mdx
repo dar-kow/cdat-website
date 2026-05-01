@@ -1,0 +1,85 @@
+---
+title: E-commerce (Advanced)
+description: Multi-feature CDAT — cart, checkout, payment composing into a full purchase flow.
+complexity: advanced
+codeLink: https://github.com/dar-kow/cdat-pattern/tree/main/examples/e-commerce
+---
+import Callout from '../../components/mdx/Callout.astro';
+import CodeWithCopy from '../../components/mdx/CodeWithCopy.astro';
+import GithubLink from '../../components/mdx/GithubLink.astro';
+
+# E-commerce (Advanced)
+
+A real-world CDAT layout: three features (`cart`, `checkout`, `payment`) composing into a full purchase-flow scenario.
+
+## Folder structure
+
+<CodeWithCopy lang="text" code={`examples/e-commerce/
+├── features/
+│   ├── cart/
+│   │   ├── components.ts
+│   │   ├── data.ts
+│   │   ├── actions.ts
+│   │   └── test.ts
+│   ├── checkout/
+│   │   └── ... (4 files)
+│   └── payment/
+│       └── ... (4 files)
+├── package.json
+└── playwright.config.ts`} />
+
+Each feature is a complete CDAT slice. The `purchase-flow` scenario in `tests/integration/` composes all three.
+
+## Composition over inheritance
+
+This is where CDAT shines. To test the full purchase flow, the integration test imports each feature's Actions class:
+
+<CodeWithCopy lang="typescript" code={`import { CartActions } from '../features/cart/actions';
+import { CheckoutActions } from '../features/checkout/actions';
+import { PaymentActions } from '../features/payment/actions';
+
+test('Given empty cart, When user buys product, Then order confirmed', async ({ page }) => {
+  const cart = new CartActions(page);
+  const checkout = new CheckoutActions(page);
+  const payment = new PaymentActions(page);
+
+  await cart.addProduct(SAMPLE_PRODUCT);
+  await checkout.fillShipping(SHIPPING_ADDRESS);
+  await payment.payWithCard(VALID_CARD);
+
+  await expect(page).toHaveURL(/order-confirmation/);
+});`} />
+
+No base classes. No deep inheritance. Just three feature classes composed at test time.
+
+<Callout type="tip" title="Where shared utilities live">
+  Cross-feature helpers (e.g., a money-formatter, a country-list lookup) go in `examples/e-commerce/utils/`. **Not** in any single feature's Actions class. Utilities are stateless functions; Actions are stateful classes.
+</Callout>
+
+## Test data strategy
+
+`data.ts` per feature contains **only that feature's** types and fixtures:
+
+- `cart/data.ts` → `Product`, `CartItem`
+- `checkout/data.ts` → `ShippingAddress`, `BillingAddress`
+- `payment/data.ts` → `CardDetails`, `PaymentMethod`
+
+Cross-feature shared types (e.g., a `CustomerProfile` used by both checkout and payment) go in `examples/e-commerce/types/`. Keep `data.ts` files small.
+
+## Run it locally
+
+<CodeWithCopy lang="bash" code={`git clone https://github.com/dar-kow/cdat-pattern.git
+cd cdat-pattern/examples/e-commerce
+pnpm install
+pnpm exec playwright install
+pnpm test`} />
+
+The full multi-feature suite runs in under 10 seconds on a modern dev machine.
+
+## Next steps
+
+- [/docs/architecture](/docs/architecture) — vertical slice rationale
+- [/examples/crm-erp](/examples/crm-erp) — enterprise patterns at the next scale
+- [/docs/anti-patterns](/docs/anti-patterns) — composition done wrong
+
+<GithubLink path="examples/e-commerce" label="View this example on GitHub" />

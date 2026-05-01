@@ -1,0 +1,122 @@
+---
+title: CRM / ERP (Enterprise)
+description: Enterprise CDAT layout — parent-child features, deep composition, business workflows.
+complexity: meta
+codeLink: https://github.com/dar-kow/cdat-pattern/tree/main/examples/crm-erp
+---
+import Callout from '../../components/mdx/Callout.astro';
+import CodeWithCopy from '../../components/mdx/CodeWithCopy.astro';
+import GithubLink from '../../components/mdx/GithubLink.astro';
+
+# CRM / ERP (Enterprise)
+
+The biggest example. Parent-child features, cross-domain composition, and the patterns that hold up when your suite hits 500+ tests.
+
+## Folder structure
+
+<CodeWithCopy lang="text" code={`examples/crm-erp/
+├── features/
+│   ├── customers/
+│   │   ├── list/{4 files}
+│   │   ├── create/{4 files}
+│   │   ├── edit/{4 files}
+│   │   └── shared/        # cross-sub-feature components
+│   ├── invoices/
+│   │   ├── list/{4 files}
+│   │   ├── generate/{4 files}
+│   │   └── status-flow/{4 files}
+│   └── reports/
+│       ├── ar-aging/{4 files}
+│       └── monthly-summary/{4 files}
+├── tests/
+│   └── integration/       # cross-feature scenarios
+├── utils/                 # money, dates, ID generators
+└── types/                 # shared domain types`} />
+
+Each leaf folder (`list/`, `create/`, etc.) is a complete CDAT slice. Sub-features live under their parent domain.
+
+## Parent-child composition
+
+A common enterprise scenario: "create a customer, generate an invoice for them, mark it paid". Three features collaborate:
+
+<CodeWithCopy lang="typescript" code={`import { CustomerCreateActions } from '../features/customers/create/actions';
+import { InvoiceGenerateActions } from '../features/invoices/generate/actions';
+import { InvoiceStatusFlowActions } from '../features/invoices/status-flow/actions';
+
+test('full customer-to-paid-invoice flow', async ({ page }) => {
+  const customerCreate = new CustomerCreateActions(page);
+  const invoiceGen     = new InvoiceGenerateActions(page);
+  const invoiceStatus  = new InvoiceStatusFlowActions(page);
+
+  const customerId = await customerCreate.createCustomer(SAMPLE_CUSTOMER);
+  const invoiceId  = await invoiceGen.generateForCustomer(customerId, INVOICE_DATA);
+  await invoiceStatus.markAsPaid(invoiceId);
+
+  await expect(page).toHaveURL(new RegExp(\`invoices/\${invoiceId}\`));
+});`} />
+
+Notice: each Action **returns** the data the next step needs (`customerId`, `invoiceId`). Actions don't mutate hidden state; they pass values explicitly.
+
+<Callout type="warn" title="Where this gets hard">
+  At enterprise scale, the temptation is to build a shared "world" object that all Actions read from and write to. Resist it. Pass IDs and references explicitly between Actions. The "global state" anti-pattern is the #1 reason large CDAT suites become unmaintainable.
+</Callout>
+
+## Domain types live in `types/`
+
+`examples/crm-erp/types/` holds types used across multiple features:
+
+<CodeWithCopy lang="typescript" code={`// types/customer.ts
+export interface Customer {
+  id: string;
+  name: string;
+  email: string;
+  taxId?: string;
+}
+
+// features/customers/create/data.ts
+import type { Customer } from '../../../types/customer';
+export type { Customer };
+export const SAMPLE_CUSTOMER: Omit<Customer, 'id'> = {
+  name: 'ACME Corp',
+  email: 'billing@acme.example',
+  taxId: '1234567890',
+};`} />
+
+`data.ts` per feature **re-exports** the cross-feature type and adds feature-specific fixtures. No duplication, but each feature still owns its scenarios.
+
+## Cross-feature `shared/` folders
+
+Inside `customers/`, the `shared/` folder holds components used by multiple sub-features:
+
+<CodeWithCopy lang="text" code={`features/customers/
+├── list/
+├── create/
+├── edit/
+└── shared/
+    ├── CustomerNameField.ts    # used by create + edit
+    └── CustomerSearchBox.ts    # used by list + create + edit`} />
+
+Use `shared/` sparingly. If you're putting more than 3 components in there, split into a real sub-feature.
+
+## Run it locally
+
+<CodeWithCopy lang="bash" code={`git clone https://github.com/dar-kow/cdat-pattern.git
+cd cdat-pattern/examples/crm-erp
+pnpm install
+pnpm exec playwright install
+pnpm test`} />
+
+## When to use this layout
+
+- **>50 features** in one application
+- **3+ teams** contributing tests to the same repo
+- **Parent-child domain hierarchy** mirrors the application's bounded contexts
+
+For smaller projects, [/examples/e-commerce](/examples/e-commerce) is enough.
+
+## Next steps
+
+- [/docs/architecture](/docs/architecture) — when to nest features
+- [/docs/anti-patterns](/docs/anti-patterns) — global state, shared/ overuse, locator drift
+
+<GithubLink path="examples/crm-erp" label="View this example on GitHub" />
