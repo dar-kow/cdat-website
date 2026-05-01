@@ -1,0 +1,14 @@
+// CDAT Data — types + fixtures, no locators, no Playwright imports.
+// Reference: https://cdat.sdet.it/docs/architecture
+
+export interface FeatureData {
+  field: string;
+}
+
+export const VALID_INPUT: FeatureData = {
+  field: 'value',
+};
+
+export const INVALID_INPUT: FeatureData = {
+  field: '',
+};

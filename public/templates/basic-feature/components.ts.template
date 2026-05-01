@@ -1,0 +1,12 @@
+import type { Page, Locator } from '@playwright/test';
+
+// CDAT Components — locators only, no logic, no assertions.
+// Reference: https://cdat.sdet.it/docs/architecture
+
+export class FeatureComponents {
+  readonly exampleButton: Locator;
+
+  constructor(page: Page) {
+    this.exampleButton = page.getByRole('button', { name: 'Example' });
+  }
+}

@@ -1,0 +1,20 @@
+import { test, expect } from '@playwright/test';
+import { FeatureActions } from './actions';
+import { VALID_INPUT } from './data';
+
+// CDAT Test — scenarios + assertions, the only place expect() lives.
+// Reference: https://cdat.sdet.it/docs/architecture
+
+test.describe('Feature', () => {
+  let actions: FeatureActions;
+
+  test.beforeEach(async ({ page }) => {
+    actions = new FeatureActions(page);
+    await page.goto('/');
+  });
+
+  test('Given valid input, When action runs, Then outcome holds', async ({ page }) => {
+    await actions.performAction(VALID_INPUT);
+    await expect(page).toHaveURL(/expected/);
+  });
+});

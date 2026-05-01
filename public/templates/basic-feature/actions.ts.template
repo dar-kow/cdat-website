@@ -1,0 +1,20 @@
+import type { Page } from '@playwright/test';
+import { Cdat } from '@cdat/utils';
+import { FeatureComponents } from './components';
+import type { FeatureData } from './data';
+
+// CDAT Actions — business logic, NO assertions.
+// Reference: https://cdat.sdet.it/docs/architecture
+
+export class FeatureActions {
+  private readonly components: FeatureComponents;
+
+  constructor(private readonly page: Page) {
+    this.components = new FeatureComponents(page);
+  }
+
+  async performAction(data: FeatureData): Promise<void> {
+    await Cdat.waitAndClick(this.components.exampleButton);
+    // ... use `data` here
+  }
+}
