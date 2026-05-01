@@ -1,0 +1,94 @@
+---
+// CtaStrip.astro — 3 hero CTAs with UTM tracking.
+const PORTFOLIO_DEEPDIVE =
+  'https://portfolio.sdet.it/articles/cdat-pattern-deep-dive?utm_source=cdat&utm_medium=hero&utm_campaign=funnel_deepdive';
+---
+<div class="cta-strip" role="group" aria-label="Hero call to actions">
+  <a
+    href="/docs/quickstart"
+    class="cta cta-primary"
+    data-plausible-event="cdat_hero_quickstart_click"
+  >
+    Quickstart →
+  </a>
+  <a
+    href="https://github.com/dar-kow/cdat-pattern"
+    target="_blank"
+    rel="noopener"
+    class="cta cta-secondary"
+    data-plausible-event="cdat_github_external_click"
+  >
+    View on GitHub ↗
+  </a>
+  <a
+    href={PORTFOLIO_DEEPDIVE}
+    class="cta cta-tertiary"
+    data-plausible-event="cdat_funnel_hero_deepdive_click"
+  >
+    Read deep dive →
+  </a>
+</div>
+
+<style>
+  .cta-strip {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 1.25rem;
+    align-items: center;
+    margin-top: 2rem;
+    font-family: var(--font-mono);
+    font-size: 0.95rem;
+  }
+  .cta {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    text-decoration: none;
+    border: 1px solid transparent;
+    transition: background-color 120ms ease, border-color 120ms ease, color 120ms ease;
+  }
+  .cta:focus-visible {
+    outline: 2px solid var(--color-accent-500);
+    outline-offset: 2px;
+  }
+
+  .cta-primary {
+    background-color: var(--color-primary-500);
+    color: var(--color-gray-900);
+    border-color: var(--color-primary-500);
+    font-weight: 700;
+  }
+  .cta-primary:hover {
+    background-color: var(--color-primary-300);
+    color: var(--color-gray-900);
+  }
+
+  .cta-secondary {
+    background-color: rgba(255, 176, 0, 0.08);
+    color: var(--color-accent-500);
+    border-color: var(--color-accent-500);
+  }
+  .cta-secondary:hover {
+    background-color: rgba(255, 176, 0, 0.18);
+    color: var(--color-accent-300);
+  }
+
+  .cta-tertiary {
+    background: transparent;
+    color: var(--color-primary-300);
+    border-color: transparent;
+    text-decoration: underline;
+    text-underline-offset: 0.25em;
+    padding-left: 0.25rem;
+    padding-right: 0.25rem;
+  }
+  .cta-tertiary:hover {
+    color: var(--color-accent-500);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cta { transition: none; }
+  }
+</style>

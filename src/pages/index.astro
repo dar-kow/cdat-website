@@ -1,51 +1,79 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import CodeSnippetBackground from '../components/CodeSnippetBackground.astro';
+import CdatDiagram from '../components/CdatDiagram.astro';
+import StatsCounter from '../components/StatsCounter.astro';
+import CtaStrip from '../components/CtaStrip.astro';
 ---
 <BaseLayout
-  title="CDAT Pattern — 4-layer test architecture for Playwright"
-  description="Components-Data-Actions-Tests. Battle-tested across 5 production systems over 18 months. MIT licensed."
+  title="CDAT Pattern — Test architecture for Playwright"
+  description="Components-Data-Actions-Tests. Battle-tested across 9 production systems over 18 months. MIT licensed."
 >
-  <section class="relative isolate mx-auto max-w-5xl px-4 py-16 md:py-24">
-    <CodeSnippetBackground />
-    <p class="font-mono text-xs uppercase tracking-widest text-primary-700">/* placeholder hero — SDE-53 will replace */</p>
-    <h1 class="mt-2 font-mono text-4xl font-bold leading-tight text-primary-500 md:text-6xl">
-      CDAT <span class="text-accent-500">Pattern</span>
-    </h1>
-    <p class="mt-4 font-sans text-lg text-gray-300 md:text-xl">
-      Components · Data · Actions · Tests. A 4-layer test architecture for Playwright,
-      battle-tested across <strong class="text-accent-500">5 production systems</strong> over <strong class="text-accent-500">18 months</strong>.
-    </p>
-
-    <div class="mt-8 flex flex-wrap gap-3 font-mono text-sm">
-      <a
-        href="/docs/quickstart"
-        class="rounded border border-primary-500 bg-primary-900/40 px-4 py-2 text-primary-500 no-underline hover:bg-primary-700/30"
-      >
-        Quick start →
-      </a>
-      <a
-        href="https://github.com/dar-kow/cdat-pattern"
-        rel="noopener"
-        class="rounded border border-accent-500 bg-accent-500/10 px-4 py-2 text-accent-500 no-underline hover:bg-accent-500/20"
-      >
-        View on GitHub ↗
-      </a>
+  <section class="hero">
+    <div class="hero-diagram">
+      <CdatDiagram />
     </div>
 
-    <dl class="mt-12 grid grid-cols-1 gap-4 font-mono text-sm md:grid-cols-3">
-      <div class="border-t border-primary-900 pt-3">
-        <dt class="text-gray-500">production systems</dt>
-        <dd class="mt-1 text-2xl text-primary-500">5</dd>
-      </div>
-      <div class="border-t border-primary-900 pt-3">
-        <dt class="text-gray-500">months in production</dt>
-        <dd class="mt-1 text-2xl text-primary-500">18</dd>
-      </div>
-      <div class="border-t border-primary-900 pt-3">
-        <dt class="text-gray-500">license</dt>
-        <dd class="mt-1 text-2xl text-accent-500">MIT</dd>
-      </div>
-    </dl>
+    <div class="hero-text">
+      <h1 class="hero-title">CDAT <span class="hero-title-accent">Pattern</span></h1>
+
+      <p class="tagline">
+        Test architecture for Playwright. Battle-tested across
+        <strong>9 production systems</strong> over <strong>18 months</strong>.
+      </p>
+
+      <p class="sub-tagline">4 layers · 3 zero-rules · MIT licensed</p>
+
+      <CtaStrip />
+      <StatsCounter />
+    </div>
   </section>
 </BaseLayout>
+
+<style>
+  .hero {
+    max-width: 64rem;
+    margin: 0 auto;
+    padding: 3rem 1rem;
+    display: grid;
+    gap: 2rem;
+  }
+
+  @media (min-width: 768px) {
+    .hero {
+      padding: 5rem 1.5rem 4rem;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+      align-items: center;
+    }
+  }
+
+  .hero-title {
+    font-family: var(--font-mono);
+    font-size: clamp(2.25rem, 6vw, 3.5rem);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin: 0;
+    color: var(--color-primary-500);
+    font-weight: 700;
+  }
+
+  .hero-title-accent {
+    color: var(--color-accent-500);
+  }
+
+  .tagline {
+    font-family: var(--font-sans);
+    font-size: clamp(1rem, 2.4vw, 1.25rem);
+    line-height: 1.55;
+    color: #cfd8d4;
+    margin: 1rem 0 0.5rem;
+  }
+  .tagline strong { color: var(--color-accent-500); font-weight: 600; }
+
+  .sub-tagline {
+    font-family: var(--font-mono);
+    color: var(--color-gray-500);
+    font-size: 0.9rem;
+    letter-spacing: 0.04em;
+    margin: 0;
+  }
+</style>

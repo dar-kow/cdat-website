@@ -1,0 +1,99 @@
+---
+// StatsCounter.astro — IntersectionObserver-triggered count-up, once-only.
+// 3 stats: 9 systems, 18 months, 0 hardcoded waits.
+const stats = [
+  { label: 'production systems', target: 9,  suffix: '' },
+  { label: 'months in production', target: 18, suffix: '' },
+  { label: 'hardcoded waits', target: 0,  suffix: '' },
+] as const;
+---
+<section class="stats-counter" aria-label="CDAT production stats">
+  <ul>
+    {stats.map((s) => (
+      <li>
+        <span class="value" data-target={s.target} aria-live="polite">0{s.suffix}</span>
+        <span class="label">{s.label}</span>
+      </li>
+    ))}
+  </ul>
+</section>
+
+<style>
+  .stats-counter {
+    margin-top: 3rem;
+  }
+  .stats-counter ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  @media (min-width: 640px) {
+    .stats-counter ul { grid-template-columns: repeat(3, 1fr); }
+  }
+  .stats-counter li {
+    border-top: 1px solid var(--color-primary-900);
+    padding-top: 0.75rem;
+    font-family: var(--font-mono);
+  }
+  .stats-counter .value {
+    display: block;
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--color-primary-500);
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+  .stats-counter .label {
+    display: block;
+    color: var(--color-gray-500);
+    font-size: 0.875rem;
+    margin-top: 0.5rem;
+  }
+</style>
+
+<script>
+  type ValueSpan = HTMLSpanElement & { dataset: { target: string; done?: string } };
+
+  const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const DURATION_MS = 1500;
+
+  function easeOut(t: number): number {
+    return 1 - Math.pow(1 - t, 3);
+  }
+
+  function animate(el: ValueSpan): void {
+    if (el.dataset.done === '1') return;
+    el.dataset.done = '1';
+    const target = Number(el.dataset.target);
+    if (REDUCED || !Number.isFinite(target)) {
+      el.textContent = String(target);
+      return;
+    }
+    const start = performance.now();
+    function tick(now: number): void {
+      const t = Math.min(1, (now - start) / DURATION_MS);
+      const v = Math.round(target * easeOut(t));
+      el.textContent = String(v);
+      if (t < 1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  }
+
+  const els = document.querySelectorAll<ValueSpan>('.stats-counter .value');
+
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver((entries) => {
+      for (const entry of entries) {
+        if (!entry.isIntersecting) continue;
+        animate(entry.target as ValueSpan);
+        io.unobserve(entry.target);
+      }
+    }, { threshold: 0.5 });
+    els.forEach((el) => io.observe(el));
+  } else {
+    els.forEach((el) => animate(el));
+  }
+</script>
