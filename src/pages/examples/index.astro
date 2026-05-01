@@ -1,0 +1,111 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+const examples = (await getCollection('examples')).sort((a, b) => {
+  const order = { basic: 0, advanced: 1, meta: 2 } as const;
+  return order[a.data.complexity] - order[b.data.complexity];
+});
+
+const complexityLabel = {
+  basic: 'Basic',
+  advanced: 'Advanced',
+  meta: 'Enterprise',
+} as const;
+---
+<BaseLayout
+  title="Examples - CDAT Pattern"
+  description="Three working examples - basic login, e-commerce composition, enterprise CRM/ERP - all linked to the cdat-pattern repository."
+>
+  <section class="examples-index">
+    <header>
+      <h1>Examples</h1>
+      <p>Three running suites, basic to enterprise. Each links to the working code in <a href="https://github.com/darco81/cdat-pattern" rel="noopener">cdat-pattern</a>.</p>
+    </header>
+
+    <ul class="ex-list" role="list">
+      {examples.map((ex) => (
+        <li>
+          <a href={`/examples/${ex.id}`} class="ex-card">
+            <span class:list={['complexity-badge', `complexity-${ex.data.complexity}`]}>{complexityLabel[ex.data.complexity]}</span>
+            <h2>{ex.data.title}</h2>
+            <p>{ex.data.description}</p>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </section>
+</BaseLayout>
+
+<style>
+  .examples-index {
+    max-width: 56rem;
+    margin: 0 auto;
+    padding: 4rem 1rem 5rem;
+  }
+  .examples-index header { margin-bottom: 2.5rem; text-align: center; }
+  .examples-index h1 {
+    font-family: var(--font-mono);
+    font-size: clamp(2rem, 5vw, 2.75rem);
+    color: var(--color-primary-500);
+    margin: 0 0 0.5rem;
+  }
+  .examples-index header p {
+    color: #cfd8d4;
+    margin: 0;
+  }
+  .ex-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 1rem;
+  }
+  @media (min-width: 768px) {
+    .ex-list { grid-template-columns: repeat(3, 1fr); }
+  }
+  .ex-card {
+    display: block;
+    padding: 1.5rem;
+    border: 1px solid rgba(0, 255, 65, 0.18);
+    border-radius: 8px;
+    background: rgba(0, 255, 65, 0.02);
+    text-decoration: none;
+    transition: border-color 120ms ease, background-color 120ms ease;
+  }
+  .ex-card:hover {
+    border-color: var(--color-primary-500);
+    background: rgba(0, 255, 65, 0.05);
+  }
+  .ex-card:focus-visible {
+    outline: 2px solid var(--color-accent-500);
+    outline-offset: 2px;
+  }
+  .complexity-badge {
+    display: inline-block;
+    padding: 0.15rem 0.6rem;
+    border-radius: 999px;
+    font-size: 0.7rem;
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    border: 1px solid currentColor;
+  }
+  .complexity-basic    { color: var(--color-primary-500); }
+  .complexity-advanced { color: var(--color-accent-500); }
+  .complexity-meta     { color: #f97316; }
+  .ex-card h2 {
+    font-family: var(--font-mono);
+    font-size: 1.15rem;
+    color: var(--color-primary-300);
+    margin: 0.75rem 0 0.25rem;
+  }
+  .ex-card p {
+    color: #cfd8d4;
+    margin: 0;
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .ex-card { transition: none; }
+  }
+</style>

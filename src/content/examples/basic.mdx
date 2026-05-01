@@ -1,0 +1,53 @@
+---
+title: Login (Basic)
+description: The simplest possible CDAT example - one feature, four files, all the principles.
+complexity: basic
+codeLink: https://github.com/darco81/cdat-pattern/tree/main/examples/basic
+---
+import Callout from '../../components/mdx/Callout.astro';
+import CodeWithCopy from '../../components/mdx/CodeWithCopy.astro';
+import GithubLink from '../../components/mdx/GithubLink.astro';
+import CodePreviewTabs from '../../components/CodePreviewTabs.astro';
+
+# Login (Basic)
+
+The simplest CDAT example. One feature (`login`), four files, all the principles. Read this first.
+
+## Live code preview
+
+Below is the actual implementation as it lives in the
+[cdat-pattern repository](https://github.com/darco81/cdat-pattern/tree/main/examples/basic/features/login).
+Switch tabs to see each layer; the structure is identical for every feature in your project.
+
+<CodePreviewTabs region="Basic login example" />
+
+## Run it locally
+
+<CodeWithCopy lang="bash" code={`git clone https://github.com/darco81/cdat-pattern.git
+cd cdat-pattern/examples/basic
+pnpm install
+pnpm exec playwright install chromium
+pnpm test`} />
+
+You should see one test pass: **"Given valid credentials, When login, Then dashboard opens"**.
+
+## Why this structure for one feature?
+
+You're testing one form. Why four files?
+
+- **`components.ts`** - when the login form's HTML changes (and it will), you change one file. The selector strategy stays in one place.
+- **`data.ts`** - when QA needs a new test user, they add a fixture. No git diff in `test.ts` for data churn.
+- **`actions.ts`** - `login(creds)` is reusable. The next feature that needs an authed session imports `LoginActions` and calls `login(VALID_USER)`. No copy-paste.
+- **`test.ts`** - assertions are clearly demarcated. If a test fails, you know exactly which scenario broke; the assertion is right there.
+
+<Callout type="tip" title="When to break out into more files">
+  When a feature has 3+ user flows (e.g., "login", "logout", "password reset" all in `auth/`), keep them in **one** Actions class with multiple methods. Don't split until you're hitting 500+ lines.
+</Callout>
+
+## Next steps
+
+- [/docs/architecture](/docs/architecture) - full dependency rules
+- [/examples/e-commerce](/examples/e-commerce) - multi-feature composition
+- [/docs/zero-rules](/docs/zero-rules) - the three principles in this code
+
+<GithubLink path="examples/basic" label="View this example on GitHub" />

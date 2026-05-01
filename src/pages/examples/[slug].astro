@@ -1,0 +1,104 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+export async function getStaticPaths() {
+  const examples = await getCollection('examples');
+  return examples.map((ex) => ({
+    params: { slug: ex.id },
+    props: { example: ex },
+  }));
+}
+
+const { example } = Astro.props;
+const { Content } = await render(example);
+
+const wordCount = example.body ? example.body.split(/\s+/).filter(Boolean).length : 0;
+const readingMinutes = Math.max(1, Math.round(wordCount / 200));
+const complexityLabel = {
+  basic: 'Basic',
+  advanced: 'Advanced',
+  meta: 'Enterprise',
+}[example.data.complexity];
+---
+<BaseLayout
+  title={`${example.data.title} - CDAT example`}
+  description={example.data.description}
+>
+  <article class="example-shell">
+    <header class="example-header">
+      <p class="example-meta">
+        <span class:list={['complexity-badge', `complexity-${example.data.complexity}`]}>{complexityLabel}</span>
+        <span> · {readingMinutes} min read</span>
+      </p>
+    </header>
+    <div class="docs-prose">
+      <Content />
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .example-shell {
+    max-width: 56rem;
+    margin: 0 auto;
+    padding: 2.5rem 1rem 4rem;
+  }
+  .example-header { margin-bottom: 1rem; }
+  .example-meta {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--color-gray-500);
+    margin: 0;
+  }
+  .complexity-badge {
+    display: inline-block;
+    padding: 0.15rem 0.55rem;
+    border-radius: 999px;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    border: 1px solid currentColor;
+  }
+  .complexity-basic    { color: var(--color-primary-500); }
+  .complexity-advanced { color: var(--color-accent-500); }
+  .complexity-meta     { color: #f97316; }
+
+  /* Reuse docs-prose styles via duplication (kept simple for now) */
+  .docs-prose {
+    font-family: var(--font-sans);
+    color: #cfd8d4;
+    line-height: 1.65;
+    font-size: 1rem;
+  }
+  .docs-prose :global(h1) {
+    font-family: var(--font-mono);
+    font-size: clamp(2rem, 5vw, 2.5rem);
+    color: var(--color-primary-500);
+    margin: 0 0 1.5rem;
+  }
+  .docs-prose :global(h2) {
+    font-family: var(--font-mono);
+    font-size: 1.5rem;
+    color: var(--color-primary-300);
+    margin: 2.5rem 0 1rem;
+    border-bottom: 1px solid var(--color-primary-900);
+    padding-bottom: 0.5rem;
+  }
+  .docs-prose :global(p) { margin: 0 0 1rem; }
+  .docs-prose :global(a) {
+    color: var(--color-accent-500);
+    text-underline-offset: 0.2em;
+  }
+  .docs-prose :global(ul) { padding-left: 1.5rem; margin: 0 0 1rem; }
+  .docs-prose :global(li) { margin: 0.25rem 0; }
+  .docs-prose :global(code) {
+    font-family: var(--font-mono);
+    font-size: 0.9em;
+    background: rgba(0, 255, 65, 0.08);
+    padding: 0.1em 0.35em;
+    border-radius: 3px;
+    color: var(--color-primary-300);
+  }
+  .docs-prose :global(pre code) { background: transparent; padding: 0; }
+</style>
