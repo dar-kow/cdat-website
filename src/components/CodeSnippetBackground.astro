@@ -1,0 +1,21 @@
+---
+// Static SVG snippets background - 4-6% opacity tile pattern.
+// Pure decoration, hidden from a11y tree.
+---
+<svg
+  aria-hidden="true"
+  class="pointer-events-none absolute inset-0 -z-10 h-full w-full opacity-[0.05]"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <defs>
+    <pattern id="cdat-snippets" x="0" y="0" width="320" height="180" patternUnits="userSpaceOnUse">
+      <text x="0" y="20" font-family="JetBrains Mono, monospace" font-size="12" fill="currentColor">await Cdat.waitAndClick(button);</text>
+      <text x="0" y="48" font-family="JetBrains Mono, monospace" font-size="12" fill="currentColor">export class LoginActions {'{'}</text>
+      <text x="0" y="76" font-family="JetBrains Mono, monospace" font-size="12" fill="currentColor">  components.ts · data.ts</text>
+      <text x="0" y="104" font-family="JetBrains Mono, monospace" font-size="12" fill="currentColor">  actions.ts · test.ts</text>
+      <text x="0" y="132" font-family="JetBrains Mono, monospace" font-size="12" fill="currentColor">await Cdat.waitForState(loader, Hidden);</text>
+      <text x="0" y="160" font-family="JetBrains Mono, monospace" font-size="12" fill="currentColor">// 4-layer · zero any · zero waitForTimeout</text>
+    </pattern>
+  </defs>
+  <rect width="100%" height="100%" fill="url(#cdat-snippets)" class="text-primary-500" />
+</svg>

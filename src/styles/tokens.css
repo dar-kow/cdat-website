@@ -1,0 +1,35 @@
+/* CDAT design tokens - terminal dark theme.
+   Matrix green (primary) + CRT amber (accent) + neutral grays. */
+:root {
+  /* Primary - matrix green */
+  --color-primary-50: #e6fff0;
+  --color-primary-100: #b3ffd4;
+  --color-primary-300: #4dffa3;
+  --color-primary-500: #00ff41;
+  --color-primary-700: #009928;
+  --color-primary-900: #003d10;
+
+  /* Accent - CRT amber */
+  --color-accent-50: #fff8e6;
+  --color-accent-300: #ffd766;
+  --color-accent-500: #ffb000;
+  --color-accent-700: #996800;
+
+  /* Neutral grays */
+  --color-gray-50: #f9fafb;
+  --color-gray-100: #f3f4f6;
+  --color-gray-300: #d1d5db;
+  --color-gray-500: #6b7280;
+  --color-gray-700: #374151;
+  --color-gray-900: #0a0e0d;
+
+  /* Semantic */
+  --color-success: var(--color-primary-500);
+  --color-warning: var(--color-accent-500);
+  --color-error: #ef4444;
+  --color-info: #3b82f6;
+
+  /* Fonts */
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+}
