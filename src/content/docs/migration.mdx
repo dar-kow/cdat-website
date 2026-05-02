@@ -60,13 +60,14 @@ Set both to `warn` initially so the team sees the violations during review witho
 
 Order features by **flake rate** descending. The fix-this-flaky-feature project doubles as your migration project.
 
-Per-feature checklist:
-- [ ] Move locators from PageObject → `components.ts`
-- [ ] Move test data from inline strings → `data.ts` with proper types
-- [ ] Move user flows from PageObject methods → `actions.ts` (drop assertions)
-- [ ] Move scenarios + `expect()` → `test.ts`
-- [ ] Run both old and new tests in CI for one full sprint
-- [ ] Delete the old PageObject
+Per-feature steps, in order:
+
+1. **Move locators** — extract `page.locator()` calls from the PageObject into a dedicated `components.ts`.
+2. **Move test data** — pull inline strings out of the PageObject and into `data.ts` with proper types.
+3. **Move user flows** — port the PageObject's high-level methods into `actions.ts`, dropping any embedded assertions on the way.
+4. **Move scenarios** — relocate the actual `test()` blocks plus their `expect()` calls into `test.ts`.
+5. **Run both suites in CI** — keep the old PageObject tests and the new CDAT tests running side-by-side for one full sprint to catch regressions.
+6. **Delete the old PageObject** — once the new suite is stable, remove the legacy file and delete its imports.
 
 ## Step 5 — Retire the `pages/` folder
 
