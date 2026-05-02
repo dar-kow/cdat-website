@@ -24,9 +24,9 @@ test.describe('Home page', () => {
     await actions.visit();
     await actions.scrollToSection('stats');
 
-    const statsText = await actions.components.statsCounter.textContent();
+    // Counter animates 0 → target over 1.5s; toContainText polls until match or timeout.
     for (const target of EXPECTED_STAT_TARGETS) {
-      expect(statsText).toContain(target);
+      await expect(actions.components.statsCounter).toContainText(target, { timeout: 5_000 });
     }
   });
 

@@ -9,7 +9,7 @@ export class FunnelComponents {
   constructor(page: Page) {
     this.footerAboutCta        = page.locator('footer a.funnel-cta');
     this.footerGithubLink      = page.locator('footer').getByRole('link', { name: /github/i });
-    this.aboutPagePortfolioCta = page.getByRole('link', { name: /view full portfolio/i });
-    this.aboutPageServicesCta  = page.getByRole('link', { name: /test architecture/i });
+    this.aboutPagePortfolioCta = page.locator('article.about-page a.cta-primary');
+    this.aboutPageServicesCta  = page.locator('article.about-page a.cta-secondary');
   }
 }

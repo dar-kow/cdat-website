@@ -14,3 +14,8 @@ Thumbs.db
 src/_generated/
 yarn-debug.log*
 yarn-error.log*
+
+# Playwright test artifacts
+test-results/
+playwright-report/
+playwright/.cache/
