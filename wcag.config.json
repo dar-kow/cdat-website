@@ -1,0 +1,21 @@
+{
+  "audit": {
+    "baseUrl": "http://localhost:4399",
+    "pages": [
+      "/",
+      "/about/",
+      "/resources/",
+      "/docs/",
+      "/docs/quickstart/",
+      "/docs/architecture/",
+      "/docs/zero-rules/",
+      "/docs/migration/",
+      "/docs/anti-patterns/",
+      "/docs/smart-waits/",
+      "/examples/",
+      "/examples/basic/",
+      "/examples/e-commerce/",
+      "/examples/crm-erp/"
+    ]
+  }
+}
