@@ -19,3 +19,9 @@ yarn-error.log*
 test-results/
 playwright-report/
 playwright/.cache/
+
+# wcag-toolkit audit artifacts (regenerable, large)
+wcag-traces/
+wcag-screenshots/
+wcag-audit/
+wcag-reports/
