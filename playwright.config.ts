@@ -11,7 +11,7 @@ export default defineConfig({
   workers: process.env.CI ? 2 : undefined,
   reporter: process.env.CI ? [['html'], ['github']] : [['list']],
   use: {
-    baseURL: process.env.BASE_URL ?? 'http://localhost:4321',
+    baseURL: process.env.BASE_URL ?? 'http://localhost:4399',
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
   },
@@ -22,8 +22,8 @@ export default defineConfig({
     { name: 'mobile-chromium', use: { ...devices['Pixel 5'] } },
   ],
   webServer: {
-    command: 'pnpm preview --port 4321',
-    url: 'http://localhost:4321',
+    command: 'pnpm preview --port 4399',
+    url: 'http://localhost:4399',
     reuseExistingServer: !process.env.CI,
     timeout: 60_000,
   },

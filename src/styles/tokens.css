@@ -15,11 +15,13 @@
   --color-accent-500: #ffb000;
   --color-accent-700: #996800;
 
-  /* Neutral grays */
+  /* Neutral grays - gray-500 bumped from #6b7280 to #9ca3af
+     to satisfy WCAG AA contrast (4.5:1 minimum on gray-900 background).
+     Audited 2026-05-02 via axe-core; previous gray-500 was 4.01:1. */
   --color-gray-50: #f9fafb;
   --color-gray-100: #f3f4f6;
   --color-gray-300: #d1d5db;
-  --color-gray-500: #6b7280;
+  --color-gray-500: #9ca3af;
   --color-gray-700: #374151;
   --color-gray-900: #0a0e0d;
 
