@@ -134,3 +134,49 @@ kill %1
 - `wcag-screenshots/` — 14 page subdirs × 2 PNGs each
 - `wcag.config.json` — explicit URL list for json-config strategy
 - `AUDIT-COMPARISON.md` — this file
+
+---
+
+## Update: 2026-05-02 — Fixed in 5 minutes
+
+After running these audits, the fix took less time than the audit setup.
+
+**Before fix** (`fdd9ffd`):
+- axe-core (Sprint 2 E2E): 0 critical
+- wcag-toolkit V0.4 public: **6 critical** (WCAG 4.1.2)
+- wcag-toolkit V0.4 alpha.4 Pro: **6 critical** + traces + screenshots
+
+**Root cause**: GitHub Flavored Markdown task lists in `migration.mdx`
+rendered as `<input type="checkbox" disabled>` without label/aria-label
+attributes. WCAG 4.1.2 (Name, Role, Value) requires accessible names on
+all interactive elements.
+
+**Why axe-core missed it**: default `wcag2aa` ruleset skips
+`aria-input-field-name` rule for disabled inputs. Disabled inputs are
+often considered "non-interactive" by generic scanners. wcag-toolkit's
+forms-accessibility specialist runs the rule unconditionally.
+
+**Fix** (commit `41a7b01`):
+- Converted GFM task lists to numbered sequential steps (`<ol>`)
+- Migration steps are inherently sequential — numbered list is
+  semantically correct and zero a11y issues
+- Each step: bold action verb + em-dash explanation
+
+**After fix** (re-audit `2026-05-02 17:25`):
+- axe-core: 0 critical (unchanged — still passes)
+- wcag-toolkit V0.4 public: **0 critical** (14 pages audited, totalFindings=0)
+- Time from finding to fix: 5 minutes
+- Lines changed: 8 insertions / 7 deletions in one MDX file (no component code)
+
+## Lesson
+
+Generic accessibility tools establish a baseline.
+Specialist tools surface real issues that survive the baseline.
+"WCAG-compliant" needs a definition: compliant under WHICH ruleset?
+
+This isn't a critique of axe-core. axe-core ran exactly the rules it was
+configured to run. The lesson is that "all green axe" is not equivalent
+to "WCAG-compliant" — it's "compliant with the subset of WCAG that axe
+checks under its default configuration".
+
+Specialists fill the gap.
