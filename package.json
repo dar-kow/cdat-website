@@ -17,10 +17,13 @@
   },
   "dependencies": {
     "@astrojs/mdx": "^5.0.4",
+    "@astrojs/node": "^10.0.6",
     "@astrojs/sitemap": "^3.7.2",
+    "@modelcontextprotocol/sdk": "^1.29.0",
     "@tailwindcss/vite": "^4.2.4",
     "astro": "^6.2.1",
-    "tailwindcss": "^4.2.4"
+    "tailwindcss": "^4.2.4",
+    "zod": "^4.4.2"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.9",

@@ -1,0 +1,24 @@
+# Placeholder Dockerfile for cdat.sdet.it BEFORE Astro scaffold (SDE-51) completes.
+# Serves a static "Coming soon" page over nginx with the same hardening as final.
+#
+# Usage:
+#   docker build -f Dockerfile.placeholder -t cdat-website:placeholder .
+#
+# Replace with the multi-stage `Dockerfile` once SDE-51 is done and the Astro build
+# produces dist/.
+
+FROM nginx:alpine
+
+# Remove default nginx site
+RUN rm -rf /usr/share/nginx/html/*
+
+# Copy custom nginx config (shared between placeholder and final)
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+# Copy placeholder page
+COPY infra/placeholder/ /usr/share/nginx/html/
+
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+  CMD wget --quiet --tries=1 --spider http://localhost/ || exit 1
+
+EXPOSE 80
