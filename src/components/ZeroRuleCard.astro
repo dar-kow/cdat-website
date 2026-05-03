@@ -48,6 +48,8 @@ const toggleId = `${cardId}-toggle`;
 
 <style>
   .zero-rule-card {
+    /* min-width: 0 prevents pre/code from forcing card to expand past parent */
+    min-width: 0;
     border: 1px solid rgba(0, 255, 65, 0.2);
     border-radius: 8px;
     background: rgba(0, 255, 65, 0.02);
@@ -55,6 +57,14 @@ const toggleId = `${cardId}-toggle`;
     display: flex;
     flex-direction: column;
     gap: 1rem;
+    transition:
+      border-color 200ms ease,
+      transform 200ms ease,
+      box-shadow 200ms ease;
+  }
+  .zero-rule-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 24px rgba(0, 255, 65, 0.08);
   }
   .zero-rule-card[data-state='good'] {
     border-color: var(--color-primary-500);
@@ -126,9 +136,14 @@ const toggleId = `${cardId}-toggle`;
   .zr-code-pane {
     position: relative;
     min-height: 7rem;
+    /* Critical: contain code overflow to card width on mobile. */
+    min-width: 0;
+    width: 100%;
   }
   .zr-code {
     transition: opacity 150ms ease;
+    min-width: 0;
+    max-width: 100%;
   }
   .zr-code[data-shown='false'] {
     display: none;
@@ -137,8 +152,14 @@ const toggleId = `${cardId}-toggle`;
     border-radius: 6px;
     padding: 1rem 1.25rem;
     overflow-x: auto;
+    overscroll-behavior-x: contain;
     font-size: 0.875rem;
     line-height: 1.5;
+    max-width: 100%;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .zero-rule-card { transition: none; }
+    .zero-rule-card:hover { transform: none; box-shadow: none; }
   }
 
   .zr-explanation {

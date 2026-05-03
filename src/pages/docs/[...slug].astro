@@ -48,6 +48,14 @@ const readingMinutes = Math.max(1, Math.round(wordCount / 200));
     grid-template-columns: 1fr;
     gap: 1.5rem;
   }
+  /* Each shell child must constrain to its track on mobile */
+  .docs-shell > * { min-width: 0; }
+
+  .docs-article {
+    min-width: 0;
+    max-width: 100%;
+  }
+
   @media (min-width: 1024px) {
     .docs-shell {
       grid-template-columns: 14rem 1fr;
@@ -70,7 +78,17 @@ const readingMinutes = Math.max(1, Math.round(wordCount / 200));
     line-height: 1.65;
     font-size: 1rem;
     max-width: 44rem;
+    min-width: 0;
   }
+  /* Long content (Shiki blocks, tables) must scroll inside the column,
+     not blow up the viewport on mobile. */
+  .docs-prose :global(pre) {
+    max-width: 100%;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+  }
+  .docs-prose :global(table) { display: block; overflow-x: auto; max-width: 100%; }
+  .docs-prose :global(img) { max-width: 100%; height: auto; }
   .docs-prose :global(h1) {
     font-family: var(--font-mono);
     font-size: clamp(2rem, 5vw, 2.5rem);

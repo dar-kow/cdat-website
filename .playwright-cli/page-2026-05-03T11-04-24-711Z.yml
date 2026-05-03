@@ -1,0 +1,428 @@
+- generic [active] [ref=e1]:
+  - link "Skip to content" [ref=e2] [cursor=pointer]:
+    - /url: "#main"
+  - banner [ref=e3]:
+    - generic [ref=e4]:
+      - link "CDAT Pattern home" [ref=e5] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e6]: ">"
+        - strong [ref=e7]: cdat
+      - button "Open menu" [ref=e8] [cursor=pointer]
+  - main [ref=e12]:
+    - generic [ref=e13]:
+      - img "CDAT 4-layer dependency diagram Components and Data feed Actions, which combine with Components and Data to feed Tests. Arrows show dependency direction." [ref=e15]:
+        - generic [ref=e16]:
+          - generic [ref=e17]:
+            - generic [ref=e19]: Components
+            - generic [ref=e20]: locators only
+          - generic [ref=e21]:
+            - generic [ref=e23]: Data
+            - generic [ref=e24]: types · fixtures
+          - generic [ref=e25]:
+            - generic [ref=e27]: Actions
+            - generic [ref=e28]: business logic
+          - generic [ref=e29]:
+            - generic [ref=e31]: Tests
+            - generic [ref=e32]: scenarios · assertions
+      - generic [ref=e38]:
+        - heading "CDAT Pattern" [level=1] [ref=e39]
+        - paragraph [ref=e40]:
+          - text: Test architecture for Playwright. Battle-tested across
+          - strong [ref=e41]: 9 production systems
+          - text: over
+          - strong [ref=e42]: 18 months
+          - text: .
+        - paragraph [ref=e43]: 4 layers · 3 zero-rules · MIT licensed
+        - group "Hero call to actions" [ref=e45]:
+          - link "Quickstart →" [ref=e46] [cursor=pointer]:
+            - /url: /docs/quickstart
+          - link "View on GitHub ↗" [ref=e47] [cursor=pointer]:
+            - /url: https://github.com/darco81/cdat-pattern
+          - link "Read deep dive →" [ref=e48] [cursor=pointer]:
+            - /url: https://portfolio.sdet.it/articles/cdat-pattern-deep-dive?utm_source=cdat&utm_medium=hero&utm_campaign=funnel_deepdive
+        - region "CDAT production stats" [ref=e50]:
+          - list [ref=e51]:
+            - listitem [ref=e52]:
+              - generic [ref=e53]: "0"
+              - generic [ref=e54]: production systems
+            - listitem [ref=e55]:
+              - generic [ref=e56]: "0"
+              - generic [ref=e57]: months in production
+            - listitem [ref=e58]:
+              - generic [ref=e59]: "0"
+              - generic [ref=e60]: hardcoded waits
+    - region "Three Zero Rules" [ref=e62]:
+      - generic [ref=e63]:
+        - heading "Three Zero Rules" [level=2] [ref=e64]
+        - paragraph [ref=e65]: Three bright lines that keep tests reliable, readable, and maintainable. Toggle each card to compare bad versus good code.
+      - generic [ref=e66]:
+        - article [ref=e67]:
+          - generic [ref=e68]:
+            - generic [ref=e69]:
+              - text: Zero
+              - code [ref=e70]: any
+            - heading "Type Safety Without Compromise" [level=3] [ref=e71]
+          - switch "Toggle to good example for Zero any" [ref=e73] [cursor=pointer]:
+            - generic [ref=e74]: ❌ Bad
+            - generic [ref=e75]: ✅ Good
+          - code [ref=e79]:
+            - generic [ref=e80]: "async getProductData(): Promise<any> {"
+            - generic [ref=e81]: return await page.evaluate(() => fetch('/api/product').then((r) => r.json()));
+            - generic [ref=e82]: "}"
+          - paragraph [ref=e83]: TypeScript any defeats the entire purpose of type checking. ESLint rule @typescript-eslint/no-explicit-any enforced. Every function signature must specify its return type. Generics over any, always.
+        - article [ref=e84]:
+          - generic [ref=e85]:
+            - generic [ref=e86]:
+              - text: Zero
+              - code [ref=e87]: waitForTimeout
+            - heading "Smart Waits Only" [level=3] [ref=e88]
+          - switch "Toggle to good example for Zero waitForTimeout" [ref=e90] [cursor=pointer]:
+            - generic [ref=e91]: ❌ Bad
+            - generic [ref=e92]: ✅ Good
+          - code [ref=e96]:
+            - generic [ref=e97]: await page.waitForTimeout(5000);
+            - generic [ref=e98]: await button.click();
+          - paragraph [ref=e99]: Hardcoded delays are flaky and slow. They fail on slow CI, succeed on fast dev machines, and waste time when elements load fast. Smart waits target the actual condition, not arbitrary time.
+        - article [ref=e100]:
+          - generic [ref=e101]:
+            - generic [ref=e102]:
+              - text: Zero
+              - code [ref=e103]: else
+            - heading "Early Returns Over Pyramids" [level=3] [ref=e104]
+          - switch "Toggle to good example for Zero else" [ref=e106] [cursor=pointer]:
+            - generic [ref=e107]: ❌ Bad
+            - generic [ref=e108]: ✅ Good
+          - code [ref=e112]:
+            - generic [ref=e113]: "if (user.isValid) {"
+            - generic [ref=e114]: "if (user.hasPermission) {"
+            - generic [ref=e115]: processOrder(user);
+            - generic [ref=e116]: "} else {"
+            - generic [ref=e117]: throw new Error('No permission');
+            - generic [ref=e118]: "}"
+            - generic [ref=e119]: "} else {"
+            - generic [ref=e120]: throw new Error('Invalid user');
+            - generic [ref=e121]: "}"
+          - paragraph [ref=e122]: Nested if-else creates pyramids of indentation that obscure logic flow. Early returns flatten the code, making each precondition explicit and the happy path obvious.
+    - region "See the 4 layers in real code" [ref=e124]:
+      - generic [ref=e125]:
+        - heading "See the 4 layers in real code" [level=2] [ref=e126]
+        - paragraph [ref=e127]:
+          - text: A working login feature, exactly as it lives in the
+          - link "cdat-pattern" [ref=e128] [cursor=pointer]:
+            - /url: https://github.com/darco81/cdat-pattern/tree/main/examples/basic
+          - text: repository. Switch tabs, copy code, drop it into your project.
+      - region "CDAT login example code" [ref=e129]:
+        - tablist "Choose CDAT layer to view" [ref=e130]:
+          - tab "components.ts" [selected] [ref=e131] [cursor=pointer]
+          - tab "data.ts" [ref=e132] [cursor=pointer]
+          - tab "actions.ts" [ref=e133] [cursor=pointer]
+          - tab "test.ts" [ref=e134] [cursor=pointer]
+        - tabpanel "components.ts" [ref=e135]:
+          - button "Copy components.ts code to clipboard" [ref=e136] [cursor=pointer]: 📋 Copy
+          - code [ref=e139]:
+            - generic [ref=e140]: /**
+            - generic [ref=e141]: "* Login Feature - Components Layer"
+            - generic [ref=e142]: "*"
+            - generic [ref=e143]: "* This file contains ONLY locators and selectors."
+            - generic [ref=e144]: "* No business logic, no assertions, no waits."
+            - generic [ref=e145]: "*"
+            - generic [ref=e146]: "* @layer Components (C in CDAT)"
+            - generic [ref=e147]: "*/"
+            - generic [ref=e148]: "import type { Page, Locator } from '@playwright/test';"
+            - generic [ref=e149]: /**
+            - generic [ref=e150]: "* Login page component locators"
+            - generic [ref=e151]: "*"
+            - generic [ref=e152]: "* @example"
+            - generic [ref=e153]: "* ```typescript"
+            - generic [ref=e154]: "* const components = new LoginComponents(page);"
+            - generic [ref=e155]: "* await components.usernameInput.fill('user');"
+            - generic [ref=e156]: "* ```"
+            - generic [ref=e157]: "*/"
+            - generic [ref=e158]: "export class LoginComponents {"
+            - generic [ref=e159]: // ─────────────────────────────────────────────────────────────────
+            - generic [ref=e160]: // FORM ELEMENTS
+            - generic [ref=e161]: // ─────────────────────────────────────────────────────────────────
+            - generic [ref=e162]: /** Username/email input field */
+            - generic [ref=e163]: "readonly usernameInput: Locator;"
+            - generic [ref=e164]: /** Password input field */
+            - generic [ref=e165]: "readonly passwordInput: Locator;"
+            - generic [ref=e166]: /** Submit/login button */
+            - generic [ref=e167]: "readonly submitButton: Locator;"
+            - generic [ref=e168]: // ─────────────────────────────────────────────────────────────────
+            - generic [ref=e169]: // FEEDBACK ELEMENTS
+            - generic [ref=e170]: // ─────────────────────────────────────────────────────────────────
+            - generic [ref=e171]: /** Error message container */
+            - generic [ref=e172]: "readonly errorMessage: Locator;"
+            - generic [ref=e173]: /** Success message or redirect indicator */
+            - generic [ref=e174]: "readonly successIndicator: Locator;"
+            - generic [ref=e175]: // ─────────────────────────────────────────────────────────────────
+            - generic [ref=e176]: // NAVIGATION ELEMENTS
+            - generic [ref=e177]: // ─────────────────────────────────────────────────────────────────
+            - generic [ref=e178]: /** Forgot password link */
+            - generic [ref=e179]: "readonly forgotPasswordLink: Locator;"
+            - generic [ref=e180]: /** Register/Sign up link */
+            - generic [ref=e181]: "readonly registerLink: Locator;"
+            - generic [ref=e182]: /** Remember me checkbox */
+            - generic [ref=e183]: "readonly rememberMeCheckbox: Locator;"
+            - generic [ref=e184]: "constructor(private readonly page: Page) {"
+            - generic [ref=e185]: // Form elements
+            - generic [ref=e186]: this.usernameInput = page.getByLabel('Username');
+            - generic [ref=e187]: this.passwordInput = page.getByLabel('Password');
+            - generic [ref=e188]: "this.submitButton = page.getByRole('button', { name: 'Sign in' });"
+            - generic [ref=e189]: // Feedback elements
+            - generic [ref=e190]: this.errorMessage = page.locator('[data-testid="error-message"]');
+            - generic [ref=e191]: this.successIndicator = page.locator('[data-testid="success-indicator"]');
+            - generic [ref=e192]: // Navigation elements
+            - generic [ref=e193]: "this.forgotPasswordLink = page.getByRole('link', { name: /forgot password/i });"
+            - generic [ref=e194]: "this.registerLink = page.getByRole('link', { name: /sign up|register/i });"
+            - generic [ref=e195]: this.rememberMeCheckbox = page.getByLabel(/remember me/i);
+            - generic [ref=e196]: "}"
+            - generic [ref=e197]: // ─────────────────────────────────────────────────────────────────
+            - generic [ref=e198]: // COMPOSED SELECTORS (Selector Composition Pattern)
+            - generic [ref=e199]: // ─────────────────────────────────────────────────────────────────
+            - generic [ref=e200]: /**
+            - generic [ref=e201]: "* Get a specific field error by field name"
+            - generic [ref=e202]: "*"
+            - generic [ref=e203]: "* @param fieldName - Name of the field (username, password)"
+            - generic [ref=e204]: "* @returns Locator for the field-specific error message"
+            - generic [ref=e205]: "*/"
+            - generic [ref=e206]: "getFieldError(fieldName: string): Locator {"
+            - generic [ref=e207]: "return this.page.locator(`[data-testid=\"${fieldName}-error\"]`);"
+            - generic [ref=e208]: "}"
+            - generic [ref=e209]: "}"
+      - generic [ref=e210]:
+        - heading "Why split into 4 files?" [level=3] [ref=e211]
+        - list [ref=e212]:
+          - listitem [ref=e213]:
+            - strong [ref=e214]: Separation of concerns
+            - text: - locators, data, behavior, and assertions never share a file.
+          - listitem [ref=e215]:
+            - strong [ref=e216]: Dependency direction
+            - text: - Components and Data have zero dependencies; Actions consume both; Tests consume all three.
+          - listitem [ref=e217]:
+            - strong [ref=e218]: Reusability
+            - text: - Actions can compose other Actions, locators can be shared, data fixtures stay typed.
+    - region "CDAT vs Classic POM vs Screenplay" [ref=e220]:
+      - generic [ref=e221]:
+        - heading "CDAT vs Classic POM vs Screenplay" [level=2] [ref=e222]
+        - paragraph [ref=e223]: Apples-to-apples on the seven decisions that matter.
+      - region "Comparison table - scrollable on mobile" [ref=e224]:
+        - table [ref=e225]:
+          - rowgroup [ref=e226]:
+            - row "Aspect Classic POM Screenplay CDAT" [ref=e227]:
+              - columnheader "Aspect" [ref=e228]
+              - columnheader "Classic POM" [ref=e229]
+              - columnheader "Screenplay" [ref=e230]
+              - columnheader "CDAT" [ref=e231]
+          - rowgroup [ref=e232]:
+            - row "Organization Per page Per actor Per feature (vertical slice)" [ref=e233]:
+              - rowheader "Organization" [ref=e234]
+              - cell "Per page" [ref=e235]
+              - cell "Per actor" [ref=e236]
+              - cell "Per feature (vertical slice)" [ref=e237]
+            - row "Layers Mixed (1-2) 5+ (Actor, Task, Question, Ability, Interaction) 4 separated (C/D/A/T)" [ref=e238]:
+              - rowheader "Layers" [ref=e239]
+              - cell "Mixed (1-2)" [ref=e240]
+              - cell "5+ (Actor, Task, Question, Ability, Interaction)" [ref=e241]
+              - cell "4 separated (C/D/A/T)" [ref=e242]
+            - row "Locators home Page Object class Targets module components.ts (dedicated)" [ref=e243]:
+              - rowheader "Locators home" [ref=e244]
+              - cell "Page Object class" [ref=e245]
+              - cell "Targets module" [ref=e246]
+              - cell "components.ts (dedicated)" [ref=e247]
+            - row "Test data Hardcoded in tests Question objects data.ts (typed)" [ref=e248]:
+              - rowheader "Test data" [ref=e249]
+              - cell "Hardcoded in tests" [ref=e250]
+              - cell "Question objects" [ref=e251]
+              - cell "data.ts (typed)" [ref=e252]
+            - row "Assertions Often in PO Tasks may contain Only in test.ts" [ref=e253]:
+              - rowheader "Assertions" [ref=e254]
+              - cell "Often in PO" [ref=e255]
+              - cell "Tasks may contain" [ref=e256]
+              - cell "Only in test.ts" [ref=e257]
+            - row "Learning curve Low Steep Gentle" [ref=e258]:
+              - rowheader "Learning curve" [ref=e259]
+              - cell "Low" [ref=e260]
+              - cell "Steep" [ref=e261]
+              - cell "Gentle" [ref=e262]
+            - row "Best for Small projects Enterprise BDD Any project size" [ref=e263]:
+              - rowheader "Best for" [ref=e264]
+              - cell "Small projects" [ref=e265]
+              - cell "Enterprise BDD" [ref=e266]
+              - cell "Any project size" [ref=e267]
+      - paragraph [ref=e268]:
+        - link "Learn more in /docs/architecture →" [ref=e269] [cursor=pointer]:
+          - /url: /docs/architecture
+    - region "9 production systems. 18 months. Zero regrets." [ref=e271]:
+      - generic [ref=e272]:
+        - heading "9 production systems. 18 months. Zero regrets." [level=2] [ref=e273]
+        - paragraph [ref=e274]: CDAT has shipped tests across nine domains. Categories below are the pattern's home turf - anonymized, but real.
+      - list [ref=e275]:
+        - listitem [ref=e276]:
+          - generic [ref=e277]: 🏢
+          - heading "B2B Platform A" [level=3] [ref=e278]
+          - list [ref=e279]:
+            - listitem [ref=e280]:
+              - strong [ref=e281]: 12K
+              - text: LOC
+            - listitem [ref=e282]:
+              - strong [ref=e283]: "340"
+              - text: tests
+            - listitem [ref=e284]:
+              - strong [ref=e285]: "14"
+              - text: months
+        - listitem [ref=e286]:
+          - generic [ref=e287]: 🛒
+          - heading "E-commerce 1" [level=3] [ref=e288]
+          - list [ref=e289]:
+            - listitem [ref=e290]:
+              - strong [ref=e291]: 18K
+              - text: LOC
+            - listitem [ref=e292]:
+              - strong [ref=e293]: "520"
+              - text: tests
+            - listitem [ref=e294]:
+              - strong [ref=e295]: "18"
+              - text: months
+        - listitem [ref=e296]:
+          - generic [ref=e297]: 📇
+          - heading "CRM Application" [level=3] [ref=e298]
+          - list [ref=e299]:
+            - listitem [ref=e300]:
+              - strong [ref=e301]: 9K
+              - text: LOC
+            - listitem [ref=e302]:
+              - strong [ref=e303]: "280"
+              - text: tests
+            - listitem [ref=e304]:
+              - strong [ref=e305]: "12"
+              - text: months
+        - listitem [ref=e306]:
+          - generic [ref=e307]: 📅
+          - heading "Event Management" [level=3] [ref=e308]
+          - list [ref=e309]:
+            - listitem [ref=e310]:
+              - strong [ref=e311]: 7K
+              - text: LOC
+            - listitem [ref=e312]:
+              - strong [ref=e313]: "210"
+              - text: tests
+            - listitem [ref=e314]:
+              - strong [ref=e315]: "10"
+              - text: months
+        - listitem [ref=e316]:
+          - generic [ref=e317]: 🎓
+          - heading "Education Platform" [level=3] [ref=e318]
+          - list [ref=e319]:
+            - listitem [ref=e320]:
+              - strong [ref=e321]: 11K
+              - text: LOC
+            - listitem [ref=e322]:
+              - strong [ref=e323]: "350"
+              - text: tests
+            - listitem [ref=e324]:
+              - strong [ref=e325]: "15"
+              - text: months
+        - listitem [ref=e326]:
+          - generic [ref=e327]: 🧾
+          - heading "Invoicing System" [level=3] [ref=e328]
+          - list [ref=e329]:
+            - listitem [ref=e330]:
+              - strong [ref=e331]: 6K
+              - text: LOC
+            - listitem [ref=e332]:
+              - strong [ref=e333]: "180"
+              - text: tests
+            - listitem [ref=e334]:
+              - strong [ref=e335]: "11"
+              - text: months
+        - listitem [ref=e336]:
+          - generic [ref=e337]: 🚚
+          - heading "Logistics App" [level=3] [ref=e338]
+          - list [ref=e339]:
+            - listitem [ref=e340]:
+              - strong [ref=e341]: 14K
+              - text: LOC
+            - listitem [ref=e342]:
+              - strong [ref=e343]: "410"
+              - text: tests
+            - listitem [ref=e344]:
+              - strong [ref=e345]: "16"
+              - text: months
+        - listitem [ref=e346]:
+          - generic [ref=e347]: 🚗
+          - heading "Automotive Wholesale" [level=3] [ref=e348]
+          - list [ref=e349]:
+            - listitem [ref=e350]:
+              - strong [ref=e351]: 13K
+              - text: LOC
+            - listitem [ref=e352]:
+              - strong [ref=e353]: "380"
+              - text: tests
+            - listitem [ref=e354]:
+              - strong [ref=e355]: "13"
+              - text: months
+        - listitem [ref=e356]:
+          - generic [ref=e357]: 🏛️
+          - heading "B2B Platform B" [level=3] [ref=e358]
+          - list [ref=e359]:
+            - listitem [ref=e360]:
+              - strong [ref=e361]: 10K
+              - text: LOC
+            - listitem [ref=e362]:
+              - strong [ref=e363]: "300"
+              - text: tests
+            - listitem [ref=e364]:
+              - strong [ref=e365]: "9"
+              - text: months
+      - complementary "What we don't do" [ref=e366]:
+        - heading "What we don't do" [level=3] [ref=e367]
+        - list [ref=e368]:
+          - listitem [ref=e369]: any types
+          - listitem [ref=e370]: page.waitForTimeout()
+          - listitem [ref=e371]: else clauses
+          - listitem [ref=e372]: page.locator() in tests
+          - listitem [ref=e373]: Hardcoded strings in tests
+          - listitem [ref=e374]: Mixing assertions in actions
+  - contentinfo [ref=e375]:
+    - generic [ref=e376]:
+      - generic [ref=e377]:
+        - heading "About" [level=3] [ref=e378]
+        - paragraph [ref=e379]: Built by Dariusz Kowalski. AI-Powered Test Automation Architect.
+        - link "View full portfolio →" [ref=e380] [cursor=pointer]:
+          - /url: https://portfolio.sdet.it?utm_source=cdat&utm_medium=footer&utm_campaign=funnel_about
+      - generic [ref=e381]:
+        - heading "Resources" [level=3] [ref=e382]
+        - list [ref=e383]:
+          - listitem [ref=e384]:
+            - link "Quickstart" [ref=e385] [cursor=pointer]:
+              - /url: /docs/quickstart
+          - listitem [ref=e386]:
+            - link "Architecture" [ref=e387] [cursor=pointer]:
+              - /url: /docs/architecture
+          - listitem [ref=e388]:
+            - link "Examples" [ref=e389] [cursor=pointer]:
+              - /url: /examples/basic
+          - listitem [ref=e390]:
+            - link "Resources" [ref=e391] [cursor=pointer]:
+              - /url: /resources
+          - listitem [ref=e392]:
+            - link "GitHub →" [ref=e393] [cursor=pointer]:
+              - /url: https://github.com/darco81/cdat-pattern
+      - generic [ref=e394]:
+        - heading "Connect" [level=3] [ref=e395]
+        - list [ref=e396]:
+          - listitem [ref=e397]:
+            - link "LinkedIn" [ref=e398] [cursor=pointer]:
+              - /url: https://www.linkedin.com/in/darius-kowalski
+          - listitem [ref=e399]:
+            - link "Contact" [ref=e400] [cursor=pointer]:
+              - /url: https://portfolio.sdet.it/contact?subject=cdat-inquiry
+    - generic [ref=e401]:
+      - paragraph [ref=e402]:
+        - text: © 2026 sdet.it · MIT licensed · Built with
+        - link "Astro" [ref=e403] [cursor=pointer]:
+          - /url: https://astro.build
+      - paragraph [ref=e404]:
+        - link "Source on GitHub" [ref=e405] [cursor=pointer]:
+          - /url: https://github.com/darco81/cdat-website

@@ -100,6 +100,10 @@ processOrder(user);`;
     grid-template-columns: 1fr;
     gap: 1.5rem;
   }
+  /* Each grid track must NOT auto-grow to its content's intrinsic size,
+     otherwise wide <pre> blocks blow out of mobile viewport. */
+  .zr-grid > * { min-width: 0; }
+
   @media (min-width: 1024px) {
     .zr-grid { grid-template-columns: repeat(3, 1fr); }
   }

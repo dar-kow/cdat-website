@@ -6,19 +6,63 @@ const links = [
   { href: '/about', label: 'About' },
 ];
 const current = Astro.url.pathname;
+const isActive = (href: string) => current === href || current.startsWith(`${href}/`);
 ---
-<header class="sticky top-0 z-40 border-b border-primary-900 bg-gray-900/95 backdrop-blur">
-  <nav aria-label="Primary" class="mx-auto flex max-w-5xl items-center justify-between px-4 py-3 font-mono text-sm">
-    <a href="/" class="text-primary-500 no-underline hover:text-primary-300" aria-label="CDAT Pattern home">
-      <span aria-hidden="true">&gt;</span> <strong>cdat</strong>
+<header class="cdat-nav">
+  <div class="cdat-nav-inner">
+    <a href="/" class="brand" aria-label="CDAT Pattern home">
+      <span aria-hidden="true" class="brand-marker">&gt;</span><strong>cdat</strong>
     </a>
-    <ul class="flex items-center gap-4">
+
+    <nav class="nav-desktop" aria-label="Primary">
+      <ul>
+        {links.map(({ href, label }) => (
+          <li>
+            <a
+              href={href}
+              class:list={['nav-link', { active: isActive(href) }]}
+              aria-current={isActive(href) ? 'page' : undefined}
+            >
+              {label}
+            </a>
+          </li>
+        ))}
+        <li>
+          <a
+            href="https://github.com/darco81/cdat-pattern"
+            class="nav-link nav-link-ext"
+            rel="noopener"
+            data-plausible-event="cdat_github_external_click"
+            data-location="nav"
+          >
+            GitHub ↗
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <button
+      type="button"
+      id="cdat-nav-toggle"
+      class="nav-toggle"
+      aria-label="Open menu"
+      aria-expanded="false"
+      aria-controls="cdat-nav-mobile"
+    >
+      <span class="nav-toggle-bar" aria-hidden="true"></span>
+      <span class="nav-toggle-bar" aria-hidden="true"></span>
+      <span class="nav-toggle-bar" aria-hidden="true"></span>
+    </button>
+  </div>
+
+  <nav id="cdat-nav-mobile" class="nav-mobile" aria-label="Mobile" hidden>
+    <ul>
       {links.map(({ href, label }) => (
         <li>
           <a
             href={href}
-            class={`no-underline ${current.startsWith(href) ? 'text-accent-500' : 'text-primary-500 hover:text-primary-300'}`}
-            aria-current={current.startsWith(href) ? 'page' : undefined}
+            class:list={['nav-link', { active: isActive(href) }]}
+            aria-current={isActive(href) ? 'page' : undefined}
           >
             {label}
           </a>
@@ -27,8 +71,10 @@ const current = Astro.url.pathname;
       <li>
         <a
           href="https://github.com/darco81/cdat-pattern"
-          class="text-primary-700 hover:text-primary-300 no-underline"
+          class="nav-link nav-link-ext"
           rel="noopener"
+          data-plausible-event="cdat_github_external_click"
+          data-location="nav-mobile"
         >
           GitHub ↗
         </a>
@@ -36,3 +82,207 @@ const current = Astro.url.pathname;
     </ul>
   </nav>
 </header>
+
+<style>
+  .cdat-nav {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    border-bottom: 1px solid var(--color-primary-900);
+    background: rgba(10, 14, 13, 0.92);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+
+  .cdat-nav-inner {
+    max-width: 64rem;
+    margin: 0 auto;
+    padding: 0.65rem 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+  }
+
+  .brand {
+    color: var(--color-primary-500);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    transition: color 160ms ease;
+    flex-shrink: 0;
+  }
+  .brand:hover { color: var(--color-primary-300); }
+  .brand-marker {
+    color: var(--color-accent-500);
+    font-weight: 700;
+  }
+
+  /* Shared link styling */
+  .nav-link {
+    color: var(--color-primary-500);
+    text-decoration: none;
+    transition: color 160ms ease, background-color 160ms ease;
+    padding: 0.35rem 0.5rem;
+    border-radius: 4px;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+  .nav-link:hover { color: var(--color-primary-300); }
+  .nav-link.active {
+    color: var(--color-accent-500);
+  }
+  .nav-link.active::before {
+    content: '';
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--color-accent-500);
+    margin-right: 0.25rem;
+  }
+  .nav-link-ext { color: var(--color-primary-700); }
+  .nav-link-ext:hover { color: var(--color-accent-300); }
+  .nav-link:focus-visible {
+    outline: 2px solid var(--color-accent-500);
+    outline-offset: 2px;
+  }
+
+  /* Desktop nav: hidden under 768px */
+  .nav-desktop { display: none; }
+  .nav-desktop ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+  @media (min-width: 768px) {
+    .nav-desktop { display: block; }
+  }
+
+  /* Hamburger: only on mobile */
+  .nav-toggle {
+    appearance: none;
+    border: 1px solid var(--color-primary-900);
+    background: transparent;
+    color: var(--color-primary-500);
+    width: 44px;
+    height: 44px;
+    border-radius: 6px;
+    cursor: pointer;
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    transition: border-color 160ms ease, background-color 160ms ease;
+  }
+  .nav-toggle:hover { border-color: var(--color-primary-500); background: rgba(0, 255, 65, 0.05); }
+  .nav-toggle:focus-visible {
+    outline: 2px solid var(--color-accent-500);
+    outline-offset: 2px;
+  }
+  .nav-toggle-bar {
+    display: block;
+    width: 18px;
+    height: 2px;
+    background: currentColor;
+    border-radius: 1px;
+    transition: transform 200ms ease, opacity 200ms ease;
+  }
+  /* Animated X when open */
+  .nav-toggle[aria-expanded='true'] .nav-toggle-bar:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+  }
+  .nav-toggle[aria-expanded='true'] .nav-toggle-bar:nth-child(2) { opacity: 0; }
+  .nav-toggle[aria-expanded='true'] .nav-toggle-bar:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+  }
+
+  @media (min-width: 768px) {
+    .nav-toggle { display: none; }
+  }
+
+  /* Mobile drawer */
+  .nav-mobile {
+    border-top: 1px solid var(--color-primary-900);
+    background: rgba(10, 14, 13, 0.97);
+    overflow: hidden;
+    animation: nav-mobile-in 200ms ease forwards;
+  }
+  .nav-mobile[hidden] { display: none; }
+  .nav-mobile ul {
+    list-style: none;
+    margin: 0;
+    padding: 0.5rem 1rem;
+    max-width: 64rem;
+    margin-inline: auto;
+  }
+  .nav-mobile li + li {
+    border-top: 1px solid rgba(0, 255, 65, 0.08);
+  }
+  .nav-mobile .nav-link {
+    display: flex;
+    width: 100%;
+    padding: 0.85rem 0.5rem;
+    border-radius: 0;
+  }
+  .nav-mobile .nav-link.active::before { display: none; }
+  .nav-mobile .nav-link.active {
+    color: var(--color-accent-500);
+    background: rgba(255, 176, 0, 0.06);
+    border-radius: 4px;
+  }
+
+  @keyframes nav-mobile-in {
+    from { opacity: 0; transform: translateY(-8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .brand, .nav-link, .nav-toggle, .nav-toggle-bar { transition: none; }
+    .nav-mobile { animation: none; }
+  }
+</style>
+
+<script>
+  const toggle = document.getElementById('cdat-nav-toggle') as HTMLButtonElement | null;
+  const drawer = document.getElementById('cdat-nav-mobile') as HTMLElement | null;
+  if (toggle && drawer) {
+    const setOpen = (open: boolean): void => {
+      toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+      toggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+      if (open) drawer.removeAttribute('hidden');
+      else drawer.setAttribute('hidden', '');
+    };
+    toggle.addEventListener('click', () => {
+      const isOpen = toggle.getAttribute('aria-expanded') === 'true';
+      setOpen(!isOpen);
+    });
+    // Close on Escape
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && toggle.getAttribute('aria-expanded') === 'true') {
+        setOpen(false);
+        toggle.focus();
+      }
+    });
+    // Close on outside click
+    document.addEventListener('click', (e) => {
+      if (toggle.getAttribute('aria-expanded') !== 'true') return;
+      const target = e.target as Node;
+      if (!toggle.contains(target) && !drawer.contains(target)) {
+        setOpen(false);
+      }
+    });
+    // Close on viewport jump to desktop
+    const mq = window.matchMedia('(min-width: 768px)');
+    mq.addEventListener('change', (e) => {
+      if (e.matches) setOpen(false);
+    });
+  }
+</script>
