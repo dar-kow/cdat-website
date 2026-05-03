@@ -1,0 +1,98 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build-and-deploy:
+    name: Build & Deploy cdat-website
+    runs-on: [self-hosted, Linux, X64, cdat-website]
+    timeout-minutes: 20
+    environment: production
+
+    env:
+      APP_DIR: /opt/docker/apps/cdat-website
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node 22 with pnpm cache
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build container
+        run: docker compose build cdat-website
+
+      - name: Sync compose to APP_DIR
+        run: |
+          set -euo pipefail
+          install -d "$APP_DIR"
+          install -m 0644 docker-compose.yml "$APP_DIR/docker-compose.yml"
+
+      - name: Deploy via docker compose
+        working-directory: ${{ env.APP_DIR }}
+        run: |
+          set -euo pipefail
+          docker compose up -d --force-recreate
+
+      - name: Smoke test container internal :8092
+        run: |
+          set -euo pipefail
+          for i in $(seq 1 30); do
+            if curl -sf -o /dev/null --max-time 5 http://127.0.0.1:8092/; then
+              echo "container healthy after ${i} attempt(s)"
+              break
+            fi
+            sleep 2
+            if [ "$i" = "30" ]; then
+              echo "::error::cdat-website container did not become healthy in 60s"
+              docker logs cdat-website --tail 100 || true
+              exit 1
+            fi
+          done
+
+      - name: Smoke test /mcp tools/list
+        run: |
+          set -euo pipefail
+          response=$(curl -sf --max-time 10 \
+            -X POST http://127.0.0.1:8092/mcp \
+            -H "content-type: application/json" \
+            -H "accept: application/json" \
+            -d '{"jsonrpc":"2.0","id":1,"method":"tools/list","params":{}}')
+          echo "$response" | grep -q '"name":"list_docs"' || { echo "::error::MCP tools/list missing list_docs"; exit 1; }
+          echo "MCP tools/list OK"
+
+      - name: Smoke test public HTTPS via Cloudflare
+        run: |
+          set -euo pipefail
+          for i in $(seq 1 12); do
+            if curl -sfI --max-time 10 https://cdat.sdet.it > /dev/null; then
+              echo "public HTTPS healthy after ${i} attempt(s)"
+              break
+            fi
+            sleep 5
+            if [ "$i" = "12" ]; then
+              echo "::warning::public HTTPS not reachable in 60s"
+            fi
+          done
+
+      - name: Prune old images
+        if: success()
+        run: docker image prune -f --filter "until=168h"

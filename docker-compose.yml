@@ -1,0 +1,42 @@
+# Compose file for cdat-website on VPS.
+#
+# Pattern matches portfolio-v2 / VPS architecture:
+# - Container binds to 127.0.0.1:8092 only (host-firewalled, not public).
+# - System nginx (host) is the reverse proxy, with vhost in
+#   /etc/nginx/sites-enabled/cdat.sdet.it pointing at localhost:8092.
+# - certbot (host, /etc/letsencrypt/) handles Let's Encrypt cert + auto-renewal.
+# - Cloudflare (orange cloud) fronts the whole thing.
+#
+# This file lives in the repo and gets installed to /opt/docker/apps/cdat-website/
+# on the VPS by the GHA self-hosted runner.
+
+services:
+  cdat-website:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: cdat-website:latest
+    container_name: cdat-website
+    restart: unless-stopped
+    ports:
+      # Bind localhost only - system nginx proxies in.
+      - '127.0.0.1:8092:4399'
+    networks:
+      - cdat_default
+    environment:
+      NODE_ENV: production
+      HOST: 0.0.0.0
+      PORT: '4399'
+    healthcheck:
+      test: ['CMD', 'wget', '-q', '--spider', 'http://127.0.0.1:4399/']
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    mem_limit: 384m
+    mem_reservation: 96m
+    cpu_shares: 128
+
+networks:
+  cdat_default:
+    driver: bridge
