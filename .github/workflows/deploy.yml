@@ -74,7 +74,7 @@ jobs:
           response=$(curl -sf --max-time 10 \
             -X POST http://127.0.0.1:8092/mcp \
             -H "content-type: application/json" \
-            -H "accept: application/json" \
+            -H "accept: application/json, text/event-stream" \
             -d '{"jsonrpc":"2.0","id":1,"method":"tools/list","params":{}}')
           echo "$response" | grep -q '"name":"list_docs"' || { echo "::error::MCP tools/list missing list_docs"; exit 1; }
           echo "MCP tools/list OK"
