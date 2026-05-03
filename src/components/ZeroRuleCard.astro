@@ -21,29 +21,32 @@ const toggleId = `${cardId}-toggle`;
     <h3 class="zr-title">{title}</h3>
   </header>
 
-  <div class="zr-toggle-wrap">
-    <button
-      type="button"
-      role="switch"
-      aria-checked="false"
-      aria-controls={`${cardId}-bad ${cardId}-good`}
-      aria-label={`Toggle to good example for Zero ${rule}`}
-      data-plausible-event="cdat_zero_rule_toggled"
-      data-rule={rule}
-      class="zr-toggle"
-      id={toggleId}
-    >
-      <span class="zr-pill zr-pill-bad" aria-hidden="true">❌ Bad</span>
-      <span class="zr-pill zr-pill-good" aria-hidden="true">✅ Good</span>
-    </button>
-  </div>
+  <div class="zr-body">
+    <div class="zr-side">
+      <div class="zr-toggle-wrap">
+        <button
+          type="button"
+          role="switch"
+          aria-checked="false"
+          aria-controls={`${cardId}-bad ${cardId}-good`}
+          aria-label={`Toggle to good example for Zero ${rule}`}
+          data-plausible-event="cdat_zero_rule_toggled"
+          data-rule={rule}
+          class="zr-toggle"
+          id={toggleId}
+        >
+          <span class="zr-pill zr-pill-bad" aria-hidden="true">❌ Bad</span>
+          <span class="zr-pill zr-pill-good" aria-hidden="true">✅ Good</span>
+        </button>
+      </div>
+      <p class="zr-explanation">{explanation}</p>
+    </div>
 
-  <div class="zr-code-pane">
-    <div class="zr-code zr-code-bad" data-shown="true" id={`${cardId}-bad`} set:html={badHtml} />
-    <div class="zr-code zr-code-good" data-shown="false" id={`${cardId}-good`} set:html={goodHtml} />
+    <div class="zr-code-pane">
+      <div class="zr-code zr-code-bad" data-shown="true" id={`${cardId}-bad`} set:html={badHtml} />
+      <div class="zr-code zr-code-good" data-shown="false" id={`${cardId}-good`} set:html={goodHtml} />
+    </div>
   </div>
-
-  <p class="zr-explanation">{explanation}</p>
 </article>
 
 <style>
@@ -98,6 +101,31 @@ const toggleId = `${cardId}-toggle`;
     font-size: 1.25rem;
     margin: 0;
     color: var(--color-primary-500);
+  }
+
+  /* Body: stacked vertically on mobile, side-by-side at ≥768px (explanation
+     left, code right). Gives wide horizontal space to code without per-card
+     scrollbars on desktop. */
+  .zr-body {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+    min-width: 0;
+  }
+  .zr-side {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    min-width: 0;
+  }
+  /* Split layout (explanation left, code right) only when there's enough
+     horizontal room - under 1024 keep it stacked so code gets full width. */
+  @media (min-width: 1024px) {
+    .zr-body {
+      grid-template-columns: minmax(14rem, 18rem) minmax(0, 1fr);
+      gap: 1.75rem;
+      align-items: start;
+    }
   }
 
   .zr-toggle-wrap { display: flex; }
