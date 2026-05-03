@@ -1,5 +1,6 @@
 import type { APIRoute } from 'astro';
 import { getCollection } from 'astro:content';
+import { tenureLabel } from '../lib/cdat-tenure';
 
 export const GET: APIRoute = async () => {
   const docs = (await getCollection('docs')).sort((a, b) => a.data.order - b.data.order);
@@ -24,7 +25,7 @@ Two empirically-proven "zero rules" + one guideline:
 - **Zero \`page.waitForTimeout()\`** — smart waits via \`@cdat/utils\` Cdat helper
 - **Early-return guideline** — prefer flat code over nested if/else (guideline, not law — production data shows ranges 9-45 \`else\` per repo)
 
-Battle-tested across **9 production systems over 18 months**. MIT licensed.
+Battle-tested across **9 production systems over ${tenureLabel}**. MIT licensed.
 
 ## Documentation
 

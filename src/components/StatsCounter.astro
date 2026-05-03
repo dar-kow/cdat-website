@@ -1,10 +1,12 @@
 ---
 // StatsCounter.astro — IntersectionObserver-triggered count-up, once-only.
-// 3 stats: 9 systems, 18 months, 0 hardcoded waits.
+// "months in production" target recomputes at each build via cdat-tenure.
+import { productionMonths } from '../lib/cdat-tenure';
+
 const stats = [
-  { label: 'production systems', target: 9,  suffix: '' },
-  { label: 'months in production', target: 18, suffix: '' },
-  { label: 'hardcoded waits', target: 0,  suffix: '' },
+  { label: 'production systems', target: 9, suffix: '' },
+  { label: 'months in production', target: productionMonths, suffix: '' },
+  { label: 'hardcoded waits', target: 0, suffix: '' },
 ] as const;
 ---
 <section class="stats-counter" aria-label="CDAT production stats">

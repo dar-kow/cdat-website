@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { tenureLabel } from '../lib/cdat-tenure';
 const PORTFOLIO_PRIMARY =
   'https://portfolio.sdet.it?utm_source=cdat&utm_medium=about&utm_campaign=funnel_portfolio';
 const SERVICES_SECONDARY =
@@ -7,13 +8,13 @@ const SERVICES_SECONDARY =
 ---
 <BaseLayout
   title="About — CDAT Pattern"
-  description="Who built CDAT Pattern? 18 months · 9 production systems · MIT-licensed open source."
+  description={`Who built CDAT Pattern? ${tenureLabel} · 9 production systems · MIT-licensed open source.`}
 >
   <article class="about-page">
     <header class="about-header">
       <h1>Who built CDAT Pattern?</h1>
       <p class="about-lede">
-        CDAT was forged across 18 months of production work on 9 systems —
+        CDAT was forged across {tenureLabel} of production work on 9 systems —
         from B2B platforms to e-commerce, CRM, and logistics. Each new project
         revealed friction in classic POM. Each iteration sharpened the 4 layers
         and 3 zero-rules into the pattern published here.

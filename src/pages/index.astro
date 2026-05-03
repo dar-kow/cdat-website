@@ -7,10 +7,11 @@ import ZeroRulesSection from '../sections/ZeroRulesSection.astro';
 import CodePreviewSection from '../sections/CodePreviewSection.astro';
 import PomComparisonSection from '../sections/PomComparisonSection.astro';
 import ProductionProofSection from '../sections/ProductionProofSection.astro';
+import { tenureLabel } from '../lib/cdat-tenure';
 ---
 <BaseLayout
   title="CDAT Pattern — Test architecture for Playwright"
-  description="Components-Data-Actions-Tests. Battle-tested across 9 production systems over 18 months. MIT licensed."
+  description={`Components-Data-Actions-Tests. Battle-tested across 9 production systems over ${tenureLabel}. MIT licensed.`}
 >
   <section class="hero">
     <div class="hero-diagram">
@@ -22,7 +23,7 @@ import ProductionProofSection from '../sections/ProductionProofSection.astro';
 
       <p class="tagline">
         Test architecture for Playwright. Battle-tested across
-        <strong>9 production systems</strong> over <strong>18 months</strong>.
+        <strong>9 production systems</strong> over <strong>{tenureLabel}</strong>.
       </p>
 
       <p class="sub-tagline">4 layers · 3 zero-rules · MIT licensed</p>

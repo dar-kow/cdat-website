@@ -3,6 +3,7 @@ import '../styles/global.css';
 import Nav from '../components/Nav.astro';
 import Footer from '../components/Footer.astro';
 import { WEBSITE_SCHEMA, PERSON_SCHEMA, SOFTWARE_SCHEMA, articleSchema } from '../lib/schemas';
+import { tenureLabel } from '../lib/cdat-tenure';
 
 type ExtraSchema = 'person' | 'software' | 'article';
 
@@ -16,7 +17,7 @@ interface Props {
 
 const {
   title = 'CDAT Pattern — 4-layer test architecture for Playwright',
-  description = 'Components-Data-Actions-Tests. Battle-tested across 9 production systems over 18 months.',
+  description = `Components-Data-Actions-Tests. Battle-tested across 9 production systems over ${tenureLabel}.`,
   canonical,
   ogImage,
   schema,
