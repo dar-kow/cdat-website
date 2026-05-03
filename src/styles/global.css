@@ -39,6 +39,36 @@ body {
   margin: 0;
   min-height: 100vh;
   line-height: 1.6;
+  /* Prevent horizontal scroll on mobile from any rogue overflow */
+  overflow-x: hidden;
+}
+
+/* Universal max-width safeguards — Shiki/code in any context */
+pre,
+code {
+  max-width: 100%;
+}
+pre {
+  overflow-x: auto;
+}
+
+/* Scroll-reveal utility — fade + lift when entering viewport.
+   Markup: <element class="reveal"> ... reveal-shown is added by JS once visible. */
+.reveal {
+  opacity: 0;
+  transform: translateY(16px);
+  transition:
+    opacity 600ms cubic-bezier(0.22, 0.61, 0.36, 1),
+    transform 600ms cubic-bezier(0.22, 0.61, 0.36, 1);
+  will-change: opacity, transform;
+}
+.reveal.reveal-shown {
+  opacity: 1;
+  transform: translateY(0);
+}
+/* Stagger via inline style --reveal-delay: 100ms / 200ms / 300ms */
+.reveal[style*='--reveal-delay'] {
+  transition-delay: var(--reveal-delay, 0ms);
 }
 
 a {
@@ -62,5 +92,9 @@ a:hover {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+  .reveal {
+    opacity: 1 !important;
+    transform: none !important;
   }
 }

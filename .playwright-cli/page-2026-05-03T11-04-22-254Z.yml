@@ -1,0 +1,139 @@
+- generic [active] [ref=e1]:
+  - link "Skip to content" [ref=e2] [cursor=pointer]:
+    - /url: "#main"
+  - banner [ref=e3]:
+    - generic [ref=e4]:
+      - link "CDAT Pattern home" [ref=e5] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e6]: ">"
+        - strong [ref=e7]: cdat
+      - button "Open menu" [ref=e8] [cursor=pointer]
+  - main [ref=e12]:
+    - article [ref=e13]:
+      - generic [ref=e14]:
+        - heading "Developer Resources" [level=1] [ref=e15]
+        - paragraph [ref=e16]: Three downloads to scaffold CDAT in any project.
+      - generic [ref=e17]:
+        - heading "VS Code Snippets" [level=2] [ref=e18]
+        - paragraph [ref=e19]:
+          - text: Four snippets —
+          - code [ref=e20]: cdat-components
+          - text: ","
+          - code [ref=e21]: cdat-data
+          - text: ","
+          - code [ref=e22]: cdat-actions
+          - text: ","
+          - code [ref=e23]: cdat-test
+          - text: — to scaffold an entire feature in seconds.
+        - paragraph [ref=e24]:
+          - link "📥 Download cdat-pattern.code-snippets" [ref=e25] [cursor=pointer]:
+            - /url: /cdat-pattern.code-snippets
+        - heading "Install" [level=3] [ref=e26]
+        - list [ref=e27]:
+          - listitem [ref=e28]: Open Command Palette (⌘⇧P on Mac, Ctrl+Shift+P on Windows/Linux)
+          - listitem [ref=e29]:
+            - text: Run
+            - emphasis [ref=e30]: "\"Snippets: Configure User Snippets\""
+          - listitem [ref=e31]:
+            - text: Choose
+            - emphasis [ref=e32]: "\"New Global Snippets file…\""
+          - listitem [ref=e33]:
+            - text: Name it
+            - code [ref=e34]: cdat-pattern.code-snippets
+          - listitem [ref=e35]: Paste the downloaded content
+        - heading "Usage" [level=3] [ref=e36]
+        - paragraph [ref=e37]:
+          - text: In any
+          - code [ref=e38]: .ts
+          - text: "file, type the prefix and press Tab:"
+        - list [ref=e39]:
+          - listitem [ref=e40]:
+            - code [ref=e41]: cdat-components
+            - text: → Components class
+          - listitem [ref=e42]:
+            - code [ref=e43]: cdat-data
+            - text: → Data types + fixtures
+          - listitem [ref=e44]:
+            - code [ref=e45]: cdat-actions
+            - text: → Actions class
+          - listitem [ref=e46]:
+            - code [ref=e47]: cdat-test
+            - text: → Test boilerplate
+      - generic [ref=e48]:
+        - heading "Feature Template (zip)" [level=2] [ref=e49]
+        - paragraph [ref=e50]:
+          - text: An empty CDAT folder ready to drop into your
+          - code [ref=e51]: features/
+          - text: directory.
+        - paragraph [ref=e52]:
+          - link "📥 Download cdat-template.zip" [ref=e53] [cursor=pointer]:
+            - /url: /cdat-template.zip
+        - heading "Usage" [level=3] [ref=e54]
+        - generic [ref=e55]:
+          - button "Copy bash code to clipboard" [ref=e56] [cursor=pointer]: 📋 Copy
+          - code [ref=e59]:
+            - generic [ref=e60]: unzip cdat-template.zip
+            - generic [ref=e61]: mv basic-feature features/my-feature
+            - generic [ref=e62]: cd features/my-feature
+            - generic [ref=e63]: mv components.ts.template components.ts
+            - generic [ref=e64]: mv data.ts.template data.ts
+            - generic [ref=e65]: mv actions.ts.template actions.ts
+            - generic [ref=e66]: mv test.ts.template test.ts
+      - generic [ref=e67]:
+        - heading "README Badge" [level=2] [ref=e68]
+        - paragraph [ref=e69]: Show that your project uses CDAT.
+        - img "Built with CDAT Pattern" [ref=e71]
+        - heading "Markdown" [level=3] [ref=e72]
+        - generic [ref=e73]:
+          - button "Copy markdown code to clipboard" [ref=e74] [cursor=pointer]: 📋 Copy
+          - code [ref=e77]:
+            - generic [ref=e78]: "[![Built with CDAT Pattern](https://cdat.sdet.it/badge.svg)](https://cdat.sdet.it)"
+        - heading "HTML" [level=3] [ref=e79]
+        - generic [ref=e80]:
+          - button "Copy html code to clipboard" [ref=e81] [cursor=pointer]: 📋 Copy
+          - code [ref=e84]:
+            - generic [ref=e85]: <a href="https://cdat.sdet.it">
+            - generic [ref=e86]: <img src="https://cdat.sdet.it/badge.svg" alt="Built with CDAT Pattern">
+            - generic [ref=e87]: </a>
+  - contentinfo [ref=e88]:
+    - generic [ref=e89]:
+      - generic [ref=e90]:
+        - heading "About" [level=3] [ref=e91]
+        - paragraph [ref=e92]: Built by Dariusz Kowalski. AI-Powered Test Automation Architect.
+        - link "View full portfolio →" [ref=e93] [cursor=pointer]:
+          - /url: https://portfolio.sdet.it?utm_source=cdat&utm_medium=footer&utm_campaign=funnel_about
+      - generic [ref=e94]:
+        - heading "Resources" [level=3] [ref=e95]
+        - list [ref=e96]:
+          - listitem [ref=e97]:
+            - link "Quickstart" [ref=e98] [cursor=pointer]:
+              - /url: /docs/quickstart
+          - listitem [ref=e99]:
+            - link "Architecture" [ref=e100] [cursor=pointer]:
+              - /url: /docs/architecture
+          - listitem [ref=e101]:
+            - link "Examples" [ref=e102] [cursor=pointer]:
+              - /url: /examples/basic
+          - listitem [ref=e103]:
+            - link "Resources" [ref=e104] [cursor=pointer]:
+              - /url: /resources
+          - listitem [ref=e105]:
+            - link "GitHub →" [ref=e106] [cursor=pointer]:
+              - /url: https://github.com/dar-kow/cdat-pattern
+      - generic [ref=e107]:
+        - heading "Connect" [level=3] [ref=e108]
+        - list [ref=e109]:
+          - listitem [ref=e110]:
+            - link "LinkedIn" [ref=e111] [cursor=pointer]:
+              - /url: https://www.linkedin.com/in/darius-kowalski
+          - listitem [ref=e112]:
+            - link "Contact" [ref=e113] [cursor=pointer]:
+              - /url: https://portfolio.sdet.it/contact?subject=cdat-inquiry
+    - generic [ref=e114]:
+      - paragraph [ref=e115]:
+        - text: © 2026 sdet.it · MIT licensed · Built with
+        - link "Astro" [ref=e116] [cursor=pointer]:
+          - /url: https://astro.build
+      - paragraph [ref=e117]:
+        - link "Source on GitHub" [ref=e118] [cursor=pointer]:
+          - /url: https://github.com/dar-kow/cdat-website

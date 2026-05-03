@@ -155,6 +155,8 @@ const renderedTabs = await Promise.all(
 
 <style>
   .code-preview {
+    min-width: 0;
+    max-width: 100%;
     border: 1px solid rgba(0, 255, 65, 0.18);
     border-radius: 8px;
     background: rgba(0, 255, 65, 0.02);
@@ -220,13 +222,17 @@ const renderedTabs = await Promise.all(
     border-color: var(--color-accent-500);
   }
 
+  .cp-panel { min-width: 0; }
+  .cp-source { min-width: 0; max-width: 100%; }
   .cp-source :global(pre.shiki-pre) {
     margin: 0;
     border-radius: 0;
     padding: 1rem 1.25rem;
     overflow-x: auto;
+    overscroll-behavior-x: contain;
     font-size: 0.875rem;
     line-height: 1.55;
     max-height: 28rem;
+    max-width: 100%;
   }
 </style>
