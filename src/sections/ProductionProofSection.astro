@@ -1,16 +1,18 @@
 ---
-import { tenureLabel } from '../lib/cdat-tenure';
+import { tenureLabel, monthsSince } from '../lib/cdat-tenure';
 
+// Per-system anchors (YYYY-MM = first month CDAT tests shipped to prod for
+// that system). `age` recomputes at every build via monthsSince().
 const systems = [
-  { name: 'B2B Platform A',         icon: '🏢', loc: '12K', tests: '340', age: 14 },
-  { name: 'E-commerce 1',           icon: '🛒', loc: '18K', tests: '520', age: 18 },
-  { name: 'CRM Application',        icon: '📇', loc: '9K',  tests: '280', age: 12 },
-  { name: 'Event Management',       icon: '📅', loc: '7K',  tests: '210', age: 10 },
-  { name: 'Education Platform',     icon: '🎓', loc: '11K', tests: '350', age: 15 },
-  { name: 'Invoicing System',       icon: '🧾', loc: '6K',  tests: '180', age: 11 },
-  { name: 'Logistics App',          icon: '🚚', loc: '14K', tests: '410', age: 16 },
-  { name: 'Automotive Wholesale',   icon: '🚗', loc: '13K', tests: '380', age: 13 },
-  { name: 'B2B Platform B',         icon: '🏛️', loc: '10K', tests: '300', age: 9  },
+  { name: 'B2B Platform A',       icon: '🏢',  loc: '12K', tests: '340', start: '2024-05' },
+  { name: 'E-commerce 1',         icon: '🛒',  loc: '18K', tests: '520', start: '2025-08' },
+  { name: 'CRM Application',      icon: '📇',  loc: '9K',  tests: '280', start: '2024-06' },
+  { name: 'Event Management',     icon: '📅',  loc: '7K',  tests: '210', start: '2024-10' },
+  { name: 'Education Platform',   icon: '🎓',  loc: '11K', tests: '350', start: '2024-11' },
+  { name: 'Invoicing System',     icon: '🧾',  loc: '6K',  tests: '180', start: '2024-05' },
+  { name: 'Logistics App',        icon: '🚚',  loc: '14K', tests: '410', start: '2025-06' },
+  { name: 'Automotive Wholesale', icon: '🚗',  loc: '13K', tests: '380', start: '2024-07' },
+  { name: 'B2B Platform B',       icon: '🏛️', loc: '10K', tests: '300', start: '2024-08' },
 ] as const;
 
 const dontDoList = [
@@ -39,7 +41,7 @@ const dontDoList = [
         <ul class="system-stats" role="list">
           <li><strong>{s.loc}</strong> LOC</li>
           <li><strong>{s.tests}</strong> tests</li>
-          <li><strong>{s.age}</strong> months</li>
+          <li><strong>{monthsSince(s.start)}</strong> months</li>
         </ul>
       </li>
     ))}

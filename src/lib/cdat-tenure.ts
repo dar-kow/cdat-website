@@ -17,6 +17,15 @@ function diffMonths(from: Date, to: Date): number {
     (to.getUTCMonth() - from.getUTCMonth());
 }
 
+// Months elapsed since a "YYYY-MM" anchor (or any Date-parseable string).
+// Used to compute per-system age in ProductionProofSection.
+export function monthsSince(anchor: string | Date): number {
+  const start = typeof anchor === 'string'
+    ? new Date(`${anchor}-01T00:00:00Z`)
+    : anchor;
+  return Math.max(0, diffMonths(start, new Date()));
+}
+
 export const productionMonths: number =
   FROZEN_MONTHS ?? diffMonths(PRODUCTION_START, new Date());
 
