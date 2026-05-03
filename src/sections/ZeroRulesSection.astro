@@ -2,7 +2,8 @@
 import ZeroRuleCard from '../components/ZeroRuleCard.astro';
 
 const ANY_BAD = `async getProductData(): Promise<any> {
-  return await page.evaluate(() => fetch('/api/product').then((r) => r.json()));
+  const data = await fetchJson('/api/product');
+  return data;
 }`;
 
 const ANY_GOOD = `interface ProductData {
@@ -12,7 +13,7 @@ const ANY_GOOD = `interface ProductData {
 }
 
 async getProductData(): Promise<ProductData> {
-  return await page.evaluate(() => fetch('/api/product').then((r) => r.json()));
+  return fetchJson<ProductData>('/api/product');
 }`;
 
 const TIMEOUT_BAD = `await page.waitForTimeout(5000);
@@ -95,16 +96,13 @@ processOrder(user);`;
     max-width: 36rem;
     line-height: 1.55;
   }
+  /* Stacked single-column always — each card gets full container width so
+     code blocks have room to breathe. Was 3-col @ 1024+ but that gave
+     each card ~315px → 712px code = 447px scroll inside every card. */
   .zr-grid {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 1.5rem;
+    gap: 1.25rem;
   }
-  /* Each grid track must NOT auto-grow to its content's intrinsic size,
-     otherwise wide <pre> blocks blow out of mobile viewport. */
   .zr-grid > * { min-width: 0; }
-
-  @media (min-width: 1024px) {
-    .zr-grid { grid-template-columns: repeat(3, 1fr); }
-  }
 </style>
