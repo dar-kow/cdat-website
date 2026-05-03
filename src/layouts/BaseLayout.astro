@@ -28,6 +28,8 @@ const canonicalUrl = canonical ?? new URL(Astro.url.pathname, siteUrl).toString(
 const slug = Astro.url.pathname.replace(/^\/+|\/+$/g, '') || 'home';
 const ogPath = `/og/${slug.replace(/\//g, '-')}.png`;
 const ogUrl = ogImage ?? new URL(ogPath, siteUrl).toString();
+
+const gscVerification = import.meta.env.PUBLIC_GSC_VERIFICATION;
 ---
 <!doctype html>
 <html lang="en">
@@ -40,6 +42,7 @@ const ogUrl = ogImage ?? new URL(ogPath, siteUrl).toString();
     <link rel="canonical" href={canonicalUrl} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="theme-color" content="#0a0e0d" />
+    {gscVerification && <meta name="google-site-verification" content={gscVerification} />}
 
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />

@@ -22,6 +22,11 @@ RUN pnpm install --frozen-lockfile
 
 # Copy source and build
 COPY . .
+
+# Build-time public env (Astro inlines PUBLIC_* into HTML)
+ARG PUBLIC_GSC_VERIFICATION=""
+ENV PUBLIC_GSC_VERIFICATION=$PUBLIC_GSC_VERIFICATION
+
 RUN pnpm build
 
 # ---- Stage 2: runtime ----
