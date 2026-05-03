@@ -1,0 +1,57 @@
+# Source control
+.git
+.gitignore
+.gitattributes
+
+# Editor
+.vscode
+.idea
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Dependencies (will be installed via pnpm install)
+node_modules
+**/node_modules
+
+# Build artifacts
+dist
+build
+.astro
+test-results
+playwright-report
+playwright/.cache
+
+# Local env
+.env
+.env.local
+.env.*.local
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# Coverage
+coverage
+.nyc_output
+
+# Project meta (not needed in build context)
+README.md
+CHANGELOG.md
+CODE_OF_CONDUCT.md
+CONTRIBUTING.md
+LICENSE
+.github
+docs
+examples
+templates
+tests
+CLAUDE.md
+
+# Multi-stage placeholder
+Dockerfile.placeholder
