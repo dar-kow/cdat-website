@@ -25,3 +25,6 @@ wcag-traces/
 wcag-screenshots/
 wcag-audit/
 wcag-reports/
+
+# Playwright CLI session artifacts (audit screenshots, console logs)
+.playwright-cli/
