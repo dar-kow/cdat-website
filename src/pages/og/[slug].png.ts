@@ -4,6 +4,7 @@ import { join } from 'node:path';
 import satori from 'satori';
 import { Resvg } from '@resvg/resvg-js';
 import { getCollection } from 'astro:content';
+import { tenureLabel } from '../../lib/cdat-tenure';
 
 const FONTS_DIR = join(process.cwd(), 'public', 'fonts');
 
@@ -22,7 +23,7 @@ async function collectPages(): Promise<PageMeta[]> {
   const examples = await getCollection('examples');
 
   const pages: PageMeta[] = [
-    { slug: 'home',      title: 'CDAT Pattern', subtitle: 'Test architecture for Playwright · 9 systems · 18 months' },
+    { slug: 'home',      title: 'CDAT Pattern', subtitle: `Test architecture for Playwright · 9 systems · ${tenureLabel}` },
     { slug: 'about',     title: 'About',         subtitle: 'Who built CDAT Pattern?' },
     { slug: 'docs',      title: 'Documentation', subtitle: 'Six pages from quickstart to anti-patterns' },
     { slug: 'examples',  title: 'Examples',      subtitle: 'Basic · Advanced · Enterprise' },

@@ -1,4 +1,6 @@
 ---
+import { tenureLabel } from '../lib/cdat-tenure';
+
 const systems = [
   { name: 'B2B Platform A',         icon: '🏢', loc: '12K', tests: '340', age: 14 },
   { name: 'E-commerce 1',           icon: '🛒', loc: '18K', tests: '520', age: 18 },
@@ -22,7 +24,7 @@ const dontDoList = [
 ---
 <section class="production-proof" aria-labelledby="proof-heading">
   <header class="pp-header">
-    <h2 id="proof-heading">9 production systems. 18 months. Zero regrets.</h2>
+    <h2 id="proof-heading">9 production systems. {tenureLabel}. Zero regrets.</h2>
     <p>
       CDAT has shipped tests across nine domains. Categories below are the
       pattern's home turf - anonymized, but real.
