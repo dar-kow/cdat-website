@@ -24,7 +24,8 @@ import CyberBgSwitcher from './CyberBgSwitcher.astro';
 <CrtVignette />
 <CrtSnowOverlay />
 <CrtScreenGlitch />
-<CyberBgSwitcher />
+{/* Floating A/B/C/D + glitch-trigger panel - local iteration only. */}
+{import.meta.env.DEV && <CyberBgSwitcher />}
 
 <script is:inline>
   (function () {
