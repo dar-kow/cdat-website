@@ -1,0 +1,122 @@
+---
+// Matrix-style code rain on the LEFT and RIGHT margins only - leaves the
+// reading column in the centre clean. Glyphs are CDAT-flavoured tokens.
+---
+
+<canvas class="crt-coderain crt-coderain-left" aria-hidden="true"></canvas>
+<canvas class="crt-coderain crt-coderain-right" aria-hidden="true"></canvas>
+
+<style is:global>
+  .crt-coderain {
+    position: fixed;
+    top: 0;
+    height: 100vh;
+    width: 13vw;
+    z-index: 9989;
+    pointer-events: none;
+    display: none;
+  }
+  .crt-coderain-left { left: 0; }
+  .crt-coderain-right { right: 0; }
+
+  [data-cyber-bg='a'] .crt-coderain { display: block; opacity: 0.5; }
+  [data-cyber-bg='b'] .crt-coderain { display: block; opacity: 0.75; width: 18vw; }
+  [data-cyber-bg='c'][data-page-type='home'] .crt-coderain { display: block; opacity: 0.5; }
+  [data-cyber-bg='d'] .crt-coderain { display: block; opacity: 0.45; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .crt-coderain { display: none !important; }
+  }
+
+  @media (max-width: 768px) {
+    /* On small screens code rain would overlap content - hide it */
+    .crt-coderain { display: none !important; }
+  }
+</style>
+
+<script is:inline>
+  (function () {
+    var TOKENS = [
+      'await', 'Cdat', 'waitAndClick', 'waitForState', 'click',
+      'components', 'actions', 'data', 'test', 'expect',
+      'async', 'const', 'export', 'import', 'class',
+      'Hidden', 'Visible', 'Enabled', '4-layer', 'zero-any',
+      '{', '}', '(', ')', ';', '=>', '<', '>', '*', '/', '0', '1'
+    ];
+    var GLYPHS = TOKENS.join(' ').split('');
+
+    function setup(canvas) {
+      if (!canvas.getContext) return;
+      var ctx = canvas.getContext('2d');
+      var w, h, cols, drops, dpr;
+      var fontSize = 14;
+
+      function resize() {
+        dpr = Math.min(window.devicePixelRatio || 1, 2);
+        var rect = canvas.getBoundingClientRect();
+        w = rect.width;
+        h = rect.height;
+        if (w === 0 || h === 0) return false;
+        canvas.width = Math.floor(w * dpr);
+        canvas.height = Math.floor(h * dpr);
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        cols = Math.max(1, Math.floor(w / fontSize));
+        drops = new Array(cols);
+        for (var i = 0; i < cols; i++) {
+          drops[i] = Math.floor(Math.random() * (h / fontSize));
+        }
+        return true;
+      }
+
+      var ready = resize();
+
+      var lastT = 0;
+      var stepMs = 90;
+      function frame(t) {
+        if (!ready) {
+          ready = resize();
+          if (!ready) {
+            setTimeout(function () { requestAnimationFrame(frame); }, 400);
+            return;
+          }
+        }
+        if (t - lastT < stepMs) {
+          requestAnimationFrame(frame);
+          return;
+        }
+        lastT = t;
+        ctx.fillStyle = 'rgba(10, 14, 13, 0.16)';
+        ctx.fillRect(0, 0, w, h);
+        ctx.font = fontSize + 'px JetBrains Mono, ui-monospace, monospace';
+        for (var i = 0; i < cols; i++) {
+          var ch = GLYPHS[Math.floor(Math.random() * GLYPHS.length)];
+          var x = i * fontSize;
+          var y = drops[i] * fontSize;
+          // Lead character bright/white, trail green
+          ctx.fillStyle = drops[i] === 0 || Math.random() < 0.04 ? '#aaffc4' : '#00ff41';
+          ctx.fillText(ch, x, y);
+          if (y > h && Math.random() > 0.97) drops[i] = 0;
+          drops[i]++;
+        }
+        requestAnimationFrame(frame);
+      }
+
+      window.addEventListener('resize', function () {
+        ready = resize();
+      });
+      requestAnimationFrame(frame);
+    }
+
+    function init() {
+      var prm = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (prm) return;
+      document.querySelectorAll('.crt-coderain').forEach(setup);
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
+  })();
+</script>

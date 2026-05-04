@@ -1,0 +1,39 @@
+---
+// Subtle scanline pattern applied directly to <body> background.
+// Stays naturally under all content (not an overlay).
+// "Linia tło pusta linia tło pusta" - uniform 1px line, 2px gap.
+---
+
+<style is:global>
+  [data-cyber-bg='a'] body,
+  [data-cyber-bg='c'][data-page-type='home'] body,
+  [data-cyber-bg='d'] body {
+    background-color: var(--color-gray-900, #0a0e0d);
+    background-image: repeating-linear-gradient(
+      to bottom,
+      rgba(0, 255, 65, 0.05) 0px,
+      rgba(0, 255, 65, 0.05) 1px,
+      transparent 1px,
+      transparent 3px
+    );
+    background-attachment: fixed;
+  }
+
+  [data-cyber-bg='b'] body {
+    background-color: var(--color-gray-900, #0a0e0d);
+    background-image: repeating-linear-gradient(
+      to bottom,
+      rgba(0, 255, 65, 0.1) 0px,
+      rgba(0, 255, 65, 0.1) 1px,
+      transparent 1px,
+      transparent 3px
+    );
+    background-attachment: fixed;
+  }
+
+  /* On non-home pages of variant C: keep clean default body bg */
+  [data-cyber-bg='c'][data-page-type='rest'] body {
+    background-color: var(--color-gray-900, #0a0e0d);
+    background-image: none;
+  }
+</style>

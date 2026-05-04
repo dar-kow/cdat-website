@@ -43,6 +43,15 @@ body {
   overflow-x: hidden;
 }
 
+/* Page content wrapper - sits ABOVE the side terminal sidebar (z-index: 0)
+   so the running test log reads as the deepest CRT layer, never covering
+   nav/main/footer text. Glitch animations attach their own filter/transform
+   to this wrapper, which already creates a stacking context during effects. */
+.crt-screen {
+  position: relative;
+  z-index: 1;
+}
+
 /* Universal max-width safeguards - Shiki/code in any context */
 pre,
 code {
@@ -50,6 +59,35 @@ code {
 }
 pre {
   overflow-x: auto;
+}
+
+/* Shiki code blocks - integrate with CRT screen bg.
+   Replace Shiki's default solid dark with a semi-transparent panel that
+   carries the screen's scanline + interlace pattern, plus a phosphor-green
+   frame so the block reads as part of the CRT, not pasted on top. */
+pre.astro-code,
+pre.shiki {
+  background-color: rgba(0, 0, 0, 0.55) !important;
+  background-image:
+    repeating-linear-gradient(
+      to bottom,
+      rgba(0, 255, 65, 0.07) 0px,
+      rgba(0, 255, 65, 0.07) 1px,
+      transparent 1px,
+      transparent 3px
+    ),
+    repeating-linear-gradient(
+      to bottom,
+      transparent 0px,
+      transparent 3px,
+      rgba(0, 0, 0, 0.3) 3px,
+      rgba(0, 0, 0, 0.3) 6px
+    ) !important;
+  background-attachment: fixed !important;
+  border: 1px solid rgba(0, 255, 65, 0.3);
+  border-radius: 6px;
+  padding: 14px 16px;
+  box-shadow: inset 0 0 14px rgba(0, 255, 65, 0.05);
 }
 
 /* Scroll-reveal utility - fade + lift when entering viewport.

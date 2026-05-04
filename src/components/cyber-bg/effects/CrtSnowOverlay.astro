@@ -1,0 +1,90 @@
+---
+// CrtSnowOverlay - full-screen B&W static "ants" noise canvas.
+// Hidden by default; briefly revealed during snow glitches via window.__cdatSnow API.
+// Renders at half resolution for performance, scales up via CSS.
+---
+
+<canvas class="crt-snow" aria-hidden="true"></canvas>
+
+<style is:global>
+  .crt-snow {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 9994;
+    pointer-events: none;
+    opacity: 0;
+    mix-blend-mode: screen;
+    image-rendering: pixelated;
+  }
+
+  .crt-snow.crt-snow-active {
+    opacity: 0.55;
+  }
+</style>
+
+<script is:inline>
+  (function () {
+    var canvas = null;
+    var ctx = null;
+    var raf = null;
+    var renderW = 0;
+    var renderH = 0;
+
+    function resize() {
+      if (!canvas) return;
+      var rect = canvas.getBoundingClientRect();
+      // Half resolution for fast pixel writes; CSS scales it up (image-rendering: pixelated)
+      renderW = Math.max(1, Math.floor(rect.width / 2));
+      renderH = Math.max(1, Math.floor(rect.height / 2));
+      canvas.width = renderW;
+      canvas.height = renderH;
+    }
+
+    function paintFrame() {
+      if (!ctx) return;
+      var d = ctx.createImageData(renderW, renderH);
+      var b = new Uint32Array(d.data.buffer);
+      var len = b.length;
+      for (var i = 0; i < len; i++) {
+        // Random alpha 0-255, RGB channels stay 0xFFFFFF (white)
+        // Result: white pixels with random transparency = TV snow on screen blend
+        var a = (255 * Math.random()) | 0;
+        b[i] = (a << 24) | 0x00ffffff;
+      }
+      ctx.putImageData(d, 0, 0);
+      raf = requestAnimationFrame(paintFrame);
+    }
+
+    function init() {
+      canvas = document.querySelector('.crt-snow');
+      if (!canvas) return;
+      ctx = canvas.getContext('2d');
+      resize();
+      window.addEventListener('resize', resize);
+    }
+
+    window.__cdatSnowStart = function () {
+      if (!canvas) return;
+      resize();
+      canvas.classList.add('crt-snow-active');
+      if (!raf) raf = requestAnimationFrame(paintFrame);
+    };
+
+    window.__cdatSnowStop = function () {
+      if (!canvas) return;
+      canvas.classList.remove('crt-snow-active');
+      if (raf) {
+        cancelAnimationFrame(raf);
+        raf = null;
+      }
+    };
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
+  })();
+</script>

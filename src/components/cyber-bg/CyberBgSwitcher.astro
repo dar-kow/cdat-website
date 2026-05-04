@@ -1,0 +1,190 @@
+---
+// Floating variant switcher + glitch test triggers + state indicator.
+// Bottom-right widget. Prototype-only.
+---
+
+<div class="cyber-switcher" role="region" aria-label="Background variant prototype switcher">
+  <div class="cyber-switcher-info">
+    <span class="cyber-switcher-label">BG</span>
+    <span class="cyber-switcher-state" data-cyber-state>-</span>
+  </div>
+  <div class="cyber-switcher-buttons">
+    <button type="button" data-variant="a" class="cyber-switcher-btn">A</button>
+    <button type="button" data-variant="b" class="cyber-switcher-btn">B</button>
+    <button type="button" data-variant="c" class="cyber-switcher-btn">C</button>
+    <button type="button" data-variant="d" class="cyber-switcher-btn">D</button>
+    <button type="button" data-variant="reset" class="cyber-switcher-btn cyber-switcher-reset" title="Replay boot">↻</button>
+  </div>
+  <div class="cyber-switcher-divider">- TRIGGER GLITCH -</div>
+  <div class="cyber-switcher-glitches">
+    <button type="button" data-glitch="snow"          class="cyber-glitch-btn" title="TV snow / mrówki">SNOW</button>
+    <button type="button" data-glitch="bw-flash"      class="cyber-glitch-btn" title="Black & white flash">B&amp;W</button>
+    <button type="button" data-glitch="vhold"         class="cyber-glitch-btn" title="Vertical hold loss">VHOLD</button>
+    <button type="button" data-glitch="jolt"          class="cyber-glitch-btn" title="Screen jolt">JOLT</button>
+    <button type="button" data-glitch="distort"       class="cyber-glitch-btn" title="Color distortion">DIST</button>
+    <button type="button" data-glitch="focus-loss"    class="cyber-glitch-btn" title="Focus loss / blur">FOCUS</button>
+    <button type="button" data-glitch="focus-recover" class="cyber-glitch-btn" title="Replay post-boot warmup (B&amp;W → color)">WARMUP</button>
+  </div>
+</div>
+
+<style>
+  .cyber-switcher {
+    position: fixed;
+    bottom: 12px;
+    right: 12px;
+    z-index: 10001;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 8px 10px;
+    background: rgba(10, 14, 13, 0.96);
+    border: 1px solid rgba(0, 255, 65, 0.55);
+    border-radius: 8px;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 11px;
+    color: #cfd8d4;
+    box-shadow:
+      0 0 24px rgba(0, 255, 65, 0.25),
+      inset 0 0 12px rgba(0, 255, 65, 0.05);
+    max-width: 280px;
+  }
+
+  .cyber-switcher-info {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 10px;
+    line-height: 1;
+  }
+  .cyber-switcher-label { color: #9ca3af; letter-spacing: 0.1em; }
+  .cyber-switcher-state {
+    color: #00ff41;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+  }
+
+  .cyber-switcher-buttons {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .cyber-switcher-btn {
+    appearance: none;
+    background: transparent;
+    color: #cfd8d4;
+    border: 1px solid rgba(0, 255, 65, 0.35);
+    border-radius: 4px;
+    width: 30px;
+    height: 30px;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 120ms, border-color 120ms, color 120ms;
+  }
+  .cyber-switcher-btn:hover,
+  .cyber-switcher-btn:focus-visible {
+    background: rgba(0, 255, 65, 0.14);
+    border-color: rgba(0, 255, 65, 0.8);
+    color: #00ff41;
+    outline: none;
+  }
+  [data-cyber-bg='a'] .cyber-switcher-btn[data-variant='a'],
+  [data-cyber-bg='b'] .cyber-switcher-btn[data-variant='b'],
+  [data-cyber-bg='c'] .cyber-switcher-btn[data-variant='c'],
+  [data-cyber-bg='d'] .cyber-switcher-btn[data-variant='d'] {
+    background: rgba(0, 255, 65, 0.22);
+    border-color: #00ff41;
+    color: #00ff41;
+  }
+
+  .cyber-switcher-reset {
+    margin-left: 4px;
+    border-color: rgba(255, 176, 0, 0.45);
+    color: #ffd766;
+  }
+  .cyber-switcher-reset:hover,
+  .cyber-switcher-reset:focus-visible {
+    background: rgba(255, 176, 0, 0.14);
+    border-color: #ffb000;
+    color: #ffb000;
+  }
+
+  .cyber-switcher-divider {
+    margin-top: 4px;
+    font-size: 9px;
+    /* #9ca3af on #0a0d0c = 7.4:1 - clears WCAG AA for small text. */
+    color: #9ca3af;
+    letter-spacing: 0.12em;
+    text-align: center;
+  }
+
+  .cyber-switcher-glitches {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 4px;
+  }
+  .cyber-glitch-btn {
+    appearance: none;
+    background: transparent;
+    color: #cfd8d4;
+    border: 1px solid rgba(255, 176, 0, 0.4);
+    border-radius: 4px;
+    padding: 5px 4px;
+    font-family: inherit;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    transition: background 120ms, border-color 120ms, color 120ms;
+  }
+  .cyber-glitch-btn:hover,
+  .cyber-glitch-btn:focus-visible {
+    background: rgba(255, 176, 0, 0.16);
+    border-color: #ffb000;
+    color: #ffb000;
+    outline: none;
+  }
+</style>
+
+<script is:inline>
+  (function () {
+    function updateState() {
+      var bg = document.documentElement.getAttribute('data-cyber-bg') || '?';
+      var boot = document.documentElement.getAttribute('data-cyber-boot') || '?';
+      var page = document.documentElement.getAttribute('data-page-type') || '?';
+      var el = document.querySelector('[data-cyber-state]');
+      if (el) el.textContent = bg.toUpperCase() + ' · boot:' + boot + ' · page:' + page;
+    }
+    updateState();
+    setTimeout(updateState, 100);
+
+    document.querySelectorAll('.cyber-switcher-btn').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var v = btn.getAttribute('data-variant');
+        if (v === 'reset') {
+          try { window.sessionStorage.removeItem('cdat-cyber-boot-played'); } catch (err) {}
+          window.location.reload();
+          return;
+        }
+        try {
+          window.localStorage.setItem('cdat-cyber-bg', v);
+          window.sessionStorage.removeItem('cdat-cyber-boot-played');
+        } catch (err) {}
+        var url = new URL(window.location.href);
+        url.searchParams.set('bg', v);
+        window.location.href = url.toString();
+      });
+    });
+
+    document.querySelectorAll('.cyber-glitch-btn').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var t = btn.getAttribute('data-glitch');
+        if (typeof window.__cdatTriggerGlitch === 'function') {
+          window.__cdatTriggerGlitch(t);
+        }
+      });
+    });
+  })();
+</script>
