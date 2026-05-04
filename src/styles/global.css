@@ -46,10 +46,18 @@ body {
 /* Page content wrapper - sits ABOVE the side terminal sidebar (z-index: 0)
    so the running test log reads as the deepest CRT layer, never covering
    nav/main/footer text. Glitch animations attach their own filter/transform
-   to this wrapper, which already creates a stacking context during effects. */
+   to this wrapper, which already creates a stacking context during effects.
+   Sticky-footer column: short pages (Examples, Resources) keep Footer at the
+   viewport bottom; main grows to fill, leaving no blank slab below it. */
 .crt-screen {
   position: relative;
   z-index: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+.crt-screen > main {
+  flex: 1 0 auto;
 }
 
 /* Universal max-width safeguards - Shiki/code in any context */
