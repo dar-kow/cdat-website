@@ -1,0 +1,32 @@
+---
+// Interlace adds a second layer to body bg - every other "row" slightly
+// darker, simulating CRT scanrow alternation. Stacks under CrtScanlines.
+---
+
+<style is:global>
+  [data-cyber-bg='a'] html,
+  [data-cyber-bg='c'][data-page-type='home'] html,
+  [data-cyber-bg='d'] html {
+    background-color: var(--color-gray-900, #0a0e0d);
+    background-image: repeating-linear-gradient(
+      to bottom,
+      transparent 0px,
+      transparent 3px,
+      rgba(0, 0, 0, 0.35) 3px,
+      rgba(0, 0, 0, 0.35) 6px
+    );
+    background-attachment: fixed;
+  }
+
+  [data-cyber-bg='b'] html {
+    background-color: var(--color-gray-900, #0a0e0d);
+    background-image: repeating-linear-gradient(
+      to bottom,
+      transparent 0px,
+      transparent 3px,
+      rgba(0, 0, 0, 0.55) 3px,
+      rgba(0, 0, 0, 0.55) 6px
+    );
+    background-attachment: fixed;
+  }
+</style>

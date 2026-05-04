@@ -4,7 +4,7 @@
 ---
 <svg
   class="cdat-diagram"
-  viewBox="0 0 800 500"
+  viewBox="0 0 800 560"
   xmlns="http://www.w3.org/2000/svg"
   role="img"
   aria-labelledby="cdat-diagram-title cdat-diagram-desc"
@@ -21,38 +21,41 @@
     </marker>
   </defs>
 
-  <g class="boxes" stroke="currentColor" stroke-width="2" fill="rgba(0,255,65,0.04)">
+  <g class="boxes" stroke="currentColor" stroke-width="3">
     <g class="box box-components">
-      <rect x="60" y="30" width="240" height="100" rx="8" />
-      <text x="180" y="78" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="22" font-weight="700" fill="currentColor">Components</text>
-      <text x="180" y="108" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="14" fill="currentColor" opacity="0.7">locators only</text>
+      <rect x="60" y="30" width="240" height="100" rx="8" fill="rgba(0, 0, 0, 0.7)" />
+      <text x="180" y="72" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="26" font-weight="700" fill="currentColor" stroke="currentColor" stroke-width="0.6" paint-order="stroke fill">Components</text>
+      <text x="180" y="106" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="20" font-weight="700" fill="currentColor" stroke="currentColor" stroke-width="0.5" paint-order="stroke fill">locators only</text>
     </g>
 
     <g class="box box-data">
-      <rect x="500" y="30" width="240" height="100" rx="8" />
-      <text x="620" y="78" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="22" font-weight="700" fill="currentColor">Data</text>
-      <text x="620" y="108" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="14" fill="currentColor" opacity="0.7">types · fixtures</text>
+      <rect x="500" y="30" width="240" height="100" rx="8" fill="rgba(0, 0, 0, 0.7)" />
+      <text x="620" y="72" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="26" font-weight="700" fill="currentColor" stroke="currentColor" stroke-width="0.6" paint-order="stroke fill">Data</text>
+      <text x="620" y="106" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="20" font-weight="700" fill="currentColor" stroke="currentColor" stroke-width="0.5" paint-order="stroke fill">types · fixtures</text>
     </g>
 
     <g class="box box-actions">
-      <rect x="280" y="200" width="240" height="100" rx="8" />
-      <text x="400" y="248" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="22" font-weight="700" fill="currentColor">Actions</text>
-      <text x="400" y="278" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="14" fill="currentColor" opacity="0.7">business logic</text>
+      <rect x="280" y="230" width="240" height="100" rx="8" fill="rgba(0, 0, 0, 0.7)" />
+      <text x="400" y="272" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="26" font-weight="700" fill="currentColor" stroke="currentColor" stroke-width="0.6" paint-order="stroke fill">Actions</text>
+      <text x="400" y="306" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="20" font-weight="700" fill="currentColor" stroke="currentColor" stroke-width="0.5" paint-order="stroke fill">business logic</text>
     </g>
 
     <g class="box box-tests">
-      <rect x="280" y="370" width="240" height="100" rx="8" />
-      <text x="400" y="418" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="22" font-weight="700" fill="currentColor">Tests</text>
-      <text x="400" y="448" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="14" fill="currentColor" opacity="0.7">scenarios · assertions</text>
+      <rect x="280" y="430" width="240" height="100" rx="8" fill="rgba(0, 0, 0, 0.7)" />
+      <text x="400" y="462" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="26" font-weight="700" fill="currentColor" stroke="currentColor" stroke-width="0.6" paint-order="stroke fill">Tests</text>
+      <text x="400" y="490" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="18" font-weight="700" fill="currentColor" stroke="currentColor" stroke-width="0.5" paint-order="stroke fill">
+        <tspan x="400">scenarios</tspan>
+        <tspan x="400" dy="22">assertions</tspan>
+      </text>
     </g>
   </g>
 
   <g class="arrows" stroke="currentColor" stroke-width="2" fill="none" marker-end="url(#arrowhead)">
-    <path d="M 220 130 L 360 200" />
-    <path d="M 580 130 L 440 200" />
-    <path d="M 400 300 L 400 370" />
-    <path d="M 180 130 C 180 250, 250 370, 290 410" />
-    <path d="M 620 130 C 620 250, 550 370, 510 410" />
+    <path d="M 220 130 L 360 230" />
+    <path d="M 580 130 L 440 230" />
+    <path d="M 400 330 L 400 430" />
+    <path d="M 180 130 C 180 280, 250 430, 290 470" />
+    <path d="M 620 130 C 620 280, 550 430, 510 470" />
   </g>
 </svg>
 
@@ -64,28 +67,20 @@
     max-width: 720px;
     margin: 0 auto;
     display: block;
+    text-rendering: geometricPrecision;
+    shape-rendering: geometricPrecision;
   }
 
-  .cdat-diagram .box rect {
-    transform-box: fill-box;
-    transform-origin: center;
-    animation: phosphor-pulse 2s ease-in-out infinite;
-    filter: drop-shadow(0 0 6px rgba(0, 255, 65, 0.35));
+  /* Static phosphor glow on labels - sharp text + subtle radiance. */
+  .cdat-diagram text {
+    paint-order: stroke fill;
+    /* SVG can't accept text-shadow via CSS reliably across browsers; rely on
+       the diagram's overall feel. Filter on root would blur - avoid. */
   }
-
-  .cdat-diagram .box-components rect { animation-delay: 0s; }
-  .cdat-diagram .box-data       rect { animation-delay: 0.5s; }
-  .cdat-diagram .box-actions    rect { animation-delay: 1s; }
-  .cdat-diagram .box-tests      rect { animation-delay: 1.5s; }
 
   .cdat-diagram .arrows path {
     stroke-dasharray: 6 6;
     animation: arrow-flow 3s linear infinite;
-  }
-
-  @keyframes phosphor-pulse {
-    0%, 100% { filter: drop-shadow(0 0 4px rgba(0, 255, 65, 0.30)); }
-    50%      { filter: drop-shadow(0 0 16px rgba(0, 255, 65, 0.65)); }
   }
 
   @keyframes arrow-flow {
@@ -93,7 +88,6 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .cdat-diagram .box rect,
     .cdat-diagram .arrows path {
       animation: none !important;
     }

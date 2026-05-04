@@ -1,0 +1,252 @@
+---
+// CrtTerminalSession - fake CI test runner log scrolling endlessly on the
+// LEFT side of the viewport. Looks like a real `pnpm test:e2e` session
+// (pass/fail/cmd lines, code snippets, percentage progress).
+//
+// Sticks lines at the bottom; as overflow grows, top lines fade via mask.
+// Lightweight DOM (caps at ~80 rendered nodes).
+---
+
+<div class="crt-terminal" aria-hidden="true">
+  <div class="crt-terminal-content"></div>
+</div>
+
+<style is:global>
+  .crt-terminal {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: clamp(200px, 18vw, 340px);
+    /* Sidebar sits on the LOWEST visible layer - body bg is z:auto, so z-index: 0
+       keeps it visually behind every overlay (vignette, snow, glitches, content). */
+    z-index: 0;
+    pointer-events: none;
+    display: none;
+    overflow: hidden;
+    padding: 8px 14px 8px 6px;
+    box-sizing: border-box;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 11px;
+    line-height: 1.55;
+    color: #00ff41;
+    text-align: left;
+    /* Replicate the full body+html bg stack so terminal blends seamlessly
+       with the surrounding screen - scanlines (matches body) + interlace
+       (matches html). bg-attachment: fixed aligns with body's fixed pattern.
+       Without these layers terminal area looked like a separate "panel". */
+    background-color: #0a0e0d;
+    background-image:
+      repeating-linear-gradient(
+        to bottom,
+        rgba(0, 255, 65, 0.05) 0px,
+        rgba(0, 255, 65, 0.05) 1px,
+        transparent 1px,
+        transparent 3px
+      ),
+      repeating-linear-gradient(
+        to bottom,
+        transparent 0px,
+        transparent 3px,
+        rgba(0, 0, 0, 0.35) 3px,
+        rgba(0, 0, 0, 0.35) 6px
+      );
+    background-attachment: fixed;
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 14%, black 92%, transparent 100%);
+    mask-image: linear-gradient(to bottom, transparent 0%, black 14%, black 92%, transparent 100%);
+  }
+
+  [data-cyber-bg='a'] .crt-terminal { display: block; opacity: 0.45; }
+  [data-cyber-bg='b'] .crt-terminal {
+    display: block;
+    opacity: 0.7;
+    width: clamp(240px, 22vw, 380px);
+  }
+  [data-cyber-bg='c'][data-page-type='home'] .crt-terminal { display: block; opacity: 0.45; }
+  [data-cyber-bg='d'] .crt-terminal { display: block; opacity: 0.42; }
+
+  .crt-terminal-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    min-height: 100%;
+    white-space: pre;
+  }
+
+  .crt-terminal-line {
+    animation: crt-term-in 0.18s ease;
+    flex: none;
+  }
+  .crt-terminal-line--cmd  { color: #cfd8d4; }
+  .crt-terminal-line--ok   { color: #00ff41; }
+  .crt-terminal-line--dim  { color: #4dffa3; opacity: 0.62; }
+  .crt-terminal-line--mute { color: #009928; opacity: 0.55; }
+  .crt-terminal-line--warn { color: #ffd766; }
+  .crt-terminal-line--fail { color: #ef4444; opacity: 0.9; }
+  .crt-terminal-line--head { color: #ffb000; }
+
+  @keyframes crt-term-in {
+    from { opacity: 0; transform: translateX(-3px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .crt-terminal { display: none !important; }
+  }
+
+  @media (max-width: 1100px) {
+    /* Hide on smaller screens - would crowd the reading column. */
+    .crt-terminal { display: none !important; }
+  }
+</style>
+
+<script is:inline>
+  (function () {
+    var SCRIPT = [
+      ['head', '╭─ cdat-test-runner ─────────'],
+      ['mute', ''],
+      ['cmd',  '$ pnpm test:e2e --grep="@regression"'],
+      ['mute', ''],
+      ['dim',  '> Running 124 tests using 4 workers'],
+      ['mute', ''],
+      ['ok',   '  ✓  login.test.ts › admin login'],
+      ['dim',  '       components.ts · data.ts'],
+      ['dim',  '       actions.ts  · test.ts'],
+      ['ok',   '  ✓  login.test.ts › 2fa flow'],
+      ['ok',   '  ✓  cart.test.ts › add to cart'],
+      ['dim',  '       await Cdat.waitAndClick(addBtn)'],
+      ['ok',   '  ✓  cart.test.ts › update quantity'],
+      ['ok',   '  ✓  cart.test.ts › remove line'],
+      ['ok',   '  ✓  checkout.test.ts › guest flow'],
+      ['dim',  '       await Cdat.waitForState('],
+      ['dim',  '         loader, Hidden'],
+      ['dim',  '       )'],
+      ['ok',   '  ✓  checkout.test.ts › card payment'],
+      ['ok',   '  ✓  search.test.ts › autocomplete'],
+      ['ok',   '  ✓  search.test.ts › fuzzy match'],
+      ['ok',   '  ✓  product.test.ts › variant select'],
+      ['warn', '  ⚠  flake.test.ts › retry 2/3'],
+      ['ok',   '  ✓  filter.test.ts › price range'],
+      ['ok',   '  ✓  filter.test.ts › multi-facet'],
+      ['ok',   '  ✓  account.test.ts › profile edit'],
+      ['dim',  '       export class LoginActions {'],
+      ['dim',  '         async fillCredentials(c) {'],
+      ['dim',  '           await Cdat.type(field,'],
+      ['dim',  '             c.user'],
+      ['dim',  '           )'],
+      ['dim',  '         }'],
+      ['dim',  '       }'],
+      ['ok',   '  ✓  register.test.ts › email pwd'],
+      ['ok',   '  ✓  forgot.test.ts › reset link'],
+      ['ok',   '  ✓  wishlist.test.ts › add item'],
+      ['ok',   '  ✓  wishlist.test.ts › share list'],
+      ['mute', ''],
+      ['cmd',  '  124 passed (3m 48s)'],
+      ['ok',   '  PASS  zero-any: enforced'],
+      ['ok',   '  PASS  zero-pom: 0 page-objects'],
+      ['ok',   '  PASS  zero-waits: 0 hardcoded waits'],
+      ['mute', ''],
+      ['cmd',  '$ pnpm test:e2e --tag="@smoke"'],
+      ['mute', ''],
+      ['dim',  '> Running 18 tests using 2 workers'],
+      ['dim',  '       4 layers · 3 zero-rules'],
+      ['ok',   '  ✓  smoke.spec.ts › homepage'],
+      ['ok',   '  ✓  smoke.spec.ts › nav links'],
+      ['ok',   '  ✓  smoke.spec.ts › footer'],
+      ['ok',   '  ✓  smoke.spec.ts › 200 status'],
+      ['mute', ''],
+      ['cmd',  '  18 passed (42s)'],
+      ['mute', ''],
+      ['cmd',  '$ pnpm playwright show-report'],
+      ['dim',  '> Serving HTML report at :9323'],
+      ['mute', ''],
+      ['cmd',  '$ git status'],
+      ['dim',  '  clean working tree'],
+      ['mute', ''],
+      ['cmd',  '$ pnpm test:e2e --project=ci'],
+      ['mute', ''],
+    ];
+
+    var INTERVAL_MS = 240;
+    var MAX_LINES = 80;
+    var STATE_KEY = 'cdat-terminal-state';
+    var idx = 0;
+
+    function loadState() {
+      try {
+        var raw = window.sessionStorage.getItem(STATE_KEY);
+        if (!raw) return null;
+        return JSON.parse(raw);
+      } catch (e) {}
+      return null;
+    }
+
+    function saveState() {
+      var box = document.querySelector('.crt-terminal-content');
+      if (!box) return;
+      try {
+        var lines = [];
+        for (var i = 0; i < box.children.length; i++) {
+          var el = box.children[i];
+          var m = el.className.match(/crt-terminal-line--(\S+)/);
+          lines.push([m ? m[1] : 'dim', el.textContent]);
+        }
+        window.sessionStorage.setItem(STATE_KEY, JSON.stringify({ idx: idx, lines: lines }));
+      } catch (e) {}
+    }
+
+    function appendLine(box, type, text) {
+      var line = document.createElement('div');
+      line.className = 'crt-terminal-line crt-terminal-line--' + type;
+      line.textContent = text;
+      box.appendChild(line);
+      while (box.children.length > MAX_LINES) {
+        box.removeChild(box.firstChild);
+      }
+    }
+
+    function pushLine() {
+      var box = document.querySelector('.crt-terminal-content');
+      if (!box) return;
+      var entry = SCRIPT[idx % SCRIPT.length];
+      idx++;
+      appendLine(box, entry[0], entry[1]);
+    }
+
+    function init() {
+      var prm = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (prm) return;
+      var box = document.querySelector('.crt-terminal-content');
+      if (!box) return;
+
+      var saved = loadState();
+      if (saved && saved.lines && saved.lines.length) {
+        // Restore exact visible state from previous page so terminal looks
+        // continuous across navigation (no flash / restart).
+        idx = saved.idx || 0;
+        for (var i = 0; i < saved.lines.length; i++) {
+          appendLine(box, saved.lines[i][0], saved.lines[i][1]);
+        }
+      } else {
+        // First ever visit - pre-fill from script start.
+        for (var k = 0; k < 28; k++) pushLine();
+      }
+      saveState();
+
+      setInterval(function () {
+        pushLine();
+        saveState();
+      }, INTERVAL_MS);
+
+      // Final snapshot just before navigation, so the new page picks up the
+      // very latest line.
+      window.addEventListener('beforeunload', saveState);
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
+  })();
+</script>
