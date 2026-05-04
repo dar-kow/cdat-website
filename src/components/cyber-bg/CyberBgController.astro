@@ -1,0 +1,79 @@
+---
+// CyberBgController — prototype-only orchestrator.
+// Reads ?bg=a|b|c|d (writes to localStorage), sets data-cyber-bg on <html>.
+// Decides whether to play the boot animation based on variant + sessionStorage.
+// Mounts all CRT effect overlays + the floating switcher widget.
+//
+// This file (and the cyber-bg/ directory) is a brainstorming prototype.
+// After variant selection, only the chosen effects survive the cleanup.
+
+import CrtBootOverlay from './effects/CrtBootOverlay.astro';
+import CrtTerminalSession from './effects/CrtTerminalSession.astro';
+import CrtScanlines from './effects/CrtScanlines.astro';
+import CrtInterlace from './effects/CrtInterlace.astro';
+import CrtVignette from './effects/CrtVignette.astro';
+import CrtSnowOverlay from './effects/CrtSnowOverlay.astro';
+import CrtScreenGlitch from './effects/CrtScreenGlitch.astro';
+import CyberBgSwitcher from './CyberBgSwitcher.astro';
+---
+
+<CrtBootOverlay />
+<CrtTerminalSession />
+<CrtScanlines />
+<CrtInterlace />
+<CrtVignette />
+<CrtSnowOverlay />
+<CrtScreenGlitch />
+<CyberBgSwitcher />
+
+<script is:inline>
+  (function () {
+    var VALID = ['a', 'b', 'c', 'd'];
+    var STORAGE_KEY = 'cdat-cyber-bg';
+    var BOOT_KEY = 'cdat-cyber-boot-played';
+
+    var params = new URLSearchParams(window.location.search);
+    var fromUrl = params.get('bg');
+    var fromStorage = null;
+    try { fromStorage = window.localStorage.getItem(STORAGE_KEY); } catch (e) {}
+
+    var variant = (fromUrl && VALID.indexOf(fromUrl) !== -1)
+      ? fromUrl
+      : (fromStorage && VALID.indexOf(fromStorage) !== -1)
+      ? fromStorage
+      : 'a';
+
+    if (fromUrl && VALID.indexOf(fromUrl) !== -1) {
+      try { window.localStorage.setItem(STORAGE_KEY, fromUrl); } catch (e) {}
+    }
+
+    document.documentElement.setAttribute('data-cyber-bg', variant);
+
+    // Boot policy:
+    //  A: once per session
+    //  B: every page load
+    //  C: once per session AND only on home (/)
+    //  D: never
+    var path = window.location.pathname;
+    var isHome = path === '/' || path === '/index.html';
+    var sessionPlayed = false;
+    try { sessionPlayed = window.sessionStorage.getItem(BOOT_KEY) === '1'; } catch (e) {}
+
+    var bootMode;
+    if (variant === 'b') {
+      bootMode = 'run';
+    } else if (variant === 'd') {
+      bootMode = 'skip';
+    } else if (variant === 'c') {
+      bootMode = isHome && !sessionPlayed ? 'run' : 'skip';
+    } else {
+      // a
+      bootMode = sessionPlayed ? 'skip' : 'run';
+    }
+
+    document.documentElement.setAttribute('data-cyber-boot', bootMode);
+    if (bootMode === 'run') {
+      try { window.sessionStorage.setItem(BOOT_KEY, '1'); } catch (e) {}
+    }
+  })();
+</script>

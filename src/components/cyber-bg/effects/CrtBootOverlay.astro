@@ -1,0 +1,120 @@
+---
+// CRT boot overlay — black screen → ignite → expand → flash → readable text → fade.
+// Total ~2.6s. Plays when [data-cyber-boot="run"].
+---
+
+<div class="crt-boot" aria-hidden="true">
+  <div class="crt-boot-screen">
+    <div class="crt-boot-line"></div>
+    <div class="crt-boot-flash"></div>
+    <div class="crt-boot-text">
+      <div class="crt-boot-text-row crt-boot-text-row--1">&gt; CDAT.SDET.IT</div>
+      <div class="crt-boot-text-row crt-boot-text-row--2">&gt; LOADING TEST ARCHITECTURE...</div>
+      <div class="crt-boot-text-row crt-boot-text-row--3">&gt; READY ▮</div>
+    </div>
+  </div>
+</div>
+
+<style is:global>
+  .crt-boot {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    pointer-events: none;
+    display: none;
+    background: #000;
+    overflow: hidden;
+  }
+
+  [data-cyber-boot='run'] .crt-boot {
+    display: block;
+    animation: crt-boot-out 2.6s ease forwards;
+  }
+
+  .crt-boot-screen { position: absolute; inset: 0; overflow: hidden; }
+
+  .crt-boot-line {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    height: 2px;
+    transform: translateY(-50%) scaleX(0);
+    transform-origin: 50% 50%;
+    background: #00ff41;
+    box-shadow: 0 0 14px #00ff41, 0 0 38px rgba(0, 255, 65, 0.7);
+  }
+
+  [data-cyber-boot='run'] .crt-boot-line {
+    animation: crt-boot-line 2.6s cubic-bezier(0.7, 0, 0.2, 1) forwards;
+  }
+
+  .crt-boot-flash {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at center, rgba(0, 255, 65, 0.55), rgba(0, 255, 65, 0) 70%);
+    opacity: 0;
+  }
+
+  [data-cyber-boot='run'] .crt-boot-flash {
+    animation: crt-boot-flash 2.6s ease forwards;
+  }
+
+  .crt-boot-text {
+    position: absolute;
+    left: 50%;
+    top: calc(50% - 30px);
+    transform: translateX(-50%);
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 14px;
+    letter-spacing: 0.12em;
+    color: #00ff41;
+    text-shadow: 0 0 8px rgba(0, 255, 65, 0.85);
+    text-align: left;
+    white-space: nowrap;
+  }
+
+  .crt-boot-text-row { opacity: 0; margin-top: 4px; }
+
+  [data-cyber-boot='run'] .crt-boot-text-row--1 { animation: crt-boot-line-show 2.6s ease forwards; animation-delay: 0.85s; }
+  [data-cyber-boot='run'] .crt-boot-text-row--2 { animation: crt-boot-line-show 2.6s ease forwards; animation-delay: 1.15s; }
+  [data-cyber-boot='run'] .crt-boot-text-row--3 { animation: crt-boot-line-show 2.6s ease forwards; animation-delay: 1.5s; color: #ffd766; text-shadow: 0 0 8px rgba(255, 176, 0, 0.85); }
+
+  @keyframes crt-boot-line {
+    0% { transform: translateY(-50%) scaleX(0) scaleY(1); opacity: 1; }
+    14% { transform: translateY(-50%) scaleX(0.4) scaleY(1); }
+    28% { transform: translateY(-50%) scaleX(1) scaleY(1); }
+    32% { transform: translateY(-50%) scaleX(1) scaleY(1); }
+    50% { transform: translateY(-50%) scaleX(1) scaleY(60); opacity: 0.7; }
+    70% { transform: translateY(-50%) scaleX(1) scaleY(220); opacity: 0.2; }
+    100% { transform: translateY(-50%) scaleX(1) scaleY(260); opacity: 0; }
+  }
+
+  @keyframes crt-boot-flash {
+    0%, 28% { opacity: 0; }
+    36% { opacity: 0.95; }
+    50% { opacity: 0.2; }
+    100% { opacity: 0; }
+  }
+
+  @keyframes crt-boot-line-show {
+    0% { opacity: 0; transform: translateY(2px); }
+    20% { opacity: 1; transform: translateY(0); }
+    70% { opacity: 1; }
+    100% { opacity: 0; }
+  }
+
+  @keyframes crt-boot-out {
+    0% { opacity: 1; visibility: visible; }
+    92% { opacity: 1; }
+    100% { opacity: 0; visibility: hidden; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .crt-boot,
+    [data-cyber-boot='run'] .crt-boot {
+      display: none !important;
+      animation: none !important;
+    }
+  }
+</style>

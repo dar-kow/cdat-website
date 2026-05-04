@@ -1,0 +1,59 @@
+---
+// Glitch flash — full-screen brief horizontal-tear flash every ~12s.
+// Subtle aberration + horizontal shift overlay. Variant B only.
+---
+
+<div class="crt-glitch" aria-hidden="true">
+  <div class="crt-glitch-band"></div>
+</div>
+
+<style is:global>
+  .crt-glitch {
+    position: fixed;
+    inset: 0;
+    z-index: 9994;
+    pointer-events: none;
+    display: none;
+    overflow: hidden;
+  }
+
+  .crt-glitch-band {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 30%;
+    height: 4px;
+    background: linear-gradient(
+      to right,
+      transparent 0%,
+      rgba(255, 0, 80, 0.5) 20%,
+      rgba(0, 255, 255, 0.5) 50%,
+      rgba(255, 176, 0, 0.5) 80%,
+      transparent 100%
+    );
+    opacity: 0;
+  }
+
+  [data-cyber-bg='b'] .crt-glitch {
+    display: block;
+  }
+
+  [data-cyber-bg='b'] .crt-glitch-band {
+    animation: crt-glitch-flash 11s infinite;
+  }
+
+  @keyframes crt-glitch-flash {
+    0%, 96% { opacity: 0; transform: translateY(0) scaleY(1); }
+    96.5% { opacity: 0.9; transform: translateY(-12px) scaleY(60); }
+    97% { opacity: 0.4; transform: translateY(40px) scaleY(20); }
+    97.5% { opacity: 0.7; transform: translateY(-4px) scaleY(80); }
+    98% { opacity: 0; transform: translateY(0) scaleY(1); }
+    100% { opacity: 0; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    [data-cyber-bg='b'] .crt-glitch-band {
+      animation: none;
+    }
+  }
+</style>

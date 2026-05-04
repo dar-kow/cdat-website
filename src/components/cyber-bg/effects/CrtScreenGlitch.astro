@@ -1,0 +1,272 @@
+---
+// CrtScreenGlitch — post-boot CRT warmup (B&W blur → sharp color) +
+// ongoing random distortions covering the full TV CRT effects palette.
+//
+// Glitch types:
+//   - focus-recover  (1300ms, post-boot only): B&W + blur → sharp color
+//   - focus-loss     (~450ms): brief blur in/out, no transform
+//   - jolt           (~250ms): translate + blur + hue
+//   - distort        (~220ms): hue + saturation + small displacement
+//   - bw-flash       (~520ms): grayscale + brightness pulse, then recover
+//   - vhold          (~480ms): vertical-hold loss — Y bounce + scaleY + blur
+//   - snow           (~360ms): full-screen B&W static noise overlay
+---
+
+<style is:global>
+  /* Post-boot CRT warmup — B&W + heavy blur → sharp color. */
+  @keyframes crt-focus-recover {
+    0%   { filter: blur(4px) brightness(0.55) grayscale(1) contrast(0.85); opacity: 0.6; }
+    22%  { filter: blur(3px) brightness(0.7) grayscale(0.9) contrast(0.95); opacity: 0.78; }
+    48%  { filter: blur(1.8px) brightness(0.85) grayscale(0.55); opacity: 0.92; }
+    72%  { filter: blur(0.7px) brightness(0.95) grayscale(0.2); opacity: 0.99; }
+    100% { filter: none; opacity: 1; }
+  }
+
+  /* All mid-session glitches: peak AT 0% (instant on click), decay to 100%.
+     Eliminates the perceived gap between user click and visible effect. */
+  @keyframes crt-focus-loss {
+    0%   { filter: blur(2.8px) brightness(0.88); }
+    35%  { filter: blur(1.7px) brightness(0.95); }
+    70%  { filter: blur(0.5px); }
+    100% { filter: none; }
+  }
+
+  @keyframes crt-jolt {
+    0%   { transform: translate3d(var(--g-x, 4px), var(--g-y, 0), 0); filter: blur(var(--g-blur, 1.5px)) hue-rotate(15deg); }
+    25%  { transform: translate3d(calc(var(--g-x, 4px) * -0.55), calc(var(--g-y, 0) * -0.4), 0); filter: blur(calc(var(--g-blur, 1.5px) * 0.7)); }
+    55%  { transform: translate3d(calc(var(--g-x, 4px) * 0.3), 0, 0); filter: blur(0.6px); }
+    100% { transform: translate3d(0, 0, 0); filter: none; }
+  }
+
+  @keyframes crt-distort {
+    0%   { filter: hue-rotate(-22deg) saturate(1.55); transform: translate3d(var(--g-x, 3px), 0, 0); }
+    40%  { filter: hue-rotate(14deg) saturate(0.6); transform: translate3d(calc(var(--g-x, 3px) * -0.4), 0, 0); }
+    75%  { filter: hue-rotate(4deg); transform: translate3d(0, 0, 0); }
+    100% { filter: none; transform: none; }
+  }
+
+  @keyframes crt-bw-flash {
+    0%   { filter: grayscale(1) brightness(1.15) contrast(1.25); }
+    35%  { filter: grayscale(0.85) brightness(0.95) contrast(1.1); }
+    70%  { filter: grayscale(0.4) brightness(1) contrast(1.05); }
+    100% { filter: none; }
+  }
+
+  @keyframes crt-vhold {
+    0%   { transform: translate3d(0, -28px, 0) scaleY(0.96); filter: blur(1.5px); }
+    25%  { transform: translate3d(0, -52px, 0) scaleY(1.03); filter: blur(2.2px); }
+    50%  { transform: translate3d(0, 18px, 0) scaleY(0.98); filter: blur(1.4px); }
+    75%  { transform: translate3d(0, -6px, 0) scaleY(1); filter: blur(0.4px); }
+    100% { transform: translate3d(0, 0, 0) scaleY(1); filter: none; }
+  }
+
+  @keyframes crt-snow {
+    0%   { filter: brightness(0.55) contrast(1.1); }
+    50%  { filter: brightness(0.65) contrast(1.05); }
+    100% { filter: none; }
+  }
+
+  /* Effects target a content wrapper (.crt-screen), NOT body — so fixed
+     overlays (sidebar terminal, switcher, snow, vignette) stay still and
+     only the actual page content distorts. */
+  .crt-screen.crt-glitch--focus-recover { animation: crt-focus-recover 1300ms ease-out forwards; }
+  .crt-screen.crt-glitch--focus-loss    { animation: crt-focus-loss var(--g-dur, 450ms) ease-in-out forwards; }
+  .crt-screen.crt-glitch--jolt          { animation: crt-jolt var(--g-dur, 250ms) cubic-bezier(0.2, 0.8, 0.4, 1) forwards; }
+  .crt-screen.crt-glitch--distort       { animation: crt-distort var(--g-dur, 220ms) ease-out forwards; }
+  .crt-screen.crt-glitch--bw-flash      { animation: crt-bw-flash var(--g-dur, 520ms) ease-in-out forwards; }
+  .crt-screen.crt-glitch--vhold         { animation: crt-vhold var(--g-dur, 480ms) cubic-bezier(0.5, 0, 0.5, 1) forwards; }
+  .crt-screen.crt-glitch--snow          { animation: crt-snow var(--g-dur, 360ms) ease-out forwards; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .crt-screen.crt-glitch--focus-recover,
+    .crt-screen.crt-glitch--focus-loss,
+    .crt-screen.crt-glitch--jolt,
+    .crt-screen.crt-glitch--distort,
+    .crt-screen.crt-glitch--bw-flash,
+    .crt-screen.crt-glitch--vhold,
+    .crt-screen.crt-glitch--snow {
+      animation: none !important;
+    }
+  }
+</style>
+
+<script is:inline>
+  (function () {
+    var prm = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prm) return;
+
+    function rand(a, b) { return a + Math.random() * (b - a); }
+    function sign() { return Math.random() > 0.5 ? 1 : -1; }
+
+    var GLITCH_CLASSES = [
+      'crt-glitch--focus-recover',
+      'crt-glitch--focus-loss',
+      'crt-glitch--jolt',
+      'crt-glitch--distort',
+      'crt-glitch--bw-flash',
+      'crt-glitch--vhold',
+      'crt-glitch--snow',
+    ];
+
+    function getScreen() {
+      return document.querySelector('.crt-screen') || document.body;
+    }
+
+    function clearGlitchClasses() {
+      var s = getScreen();
+      for (var i = 0; i < GLITCH_CLASSES.length; i++) {
+        s.classList.remove(GLITCH_CLASSES[i]);
+      }
+    }
+
+    function applyGlitch(type, intensity) {
+      intensity = intensity || 1;
+      var bg = document.documentElement.getAttribute('data-cyber-bg');
+      if (bg !== 'a' && bg !== 'b' && bg !== 'c' && bg !== 'd') return;
+
+      var screen = getScreen();
+      screen.style.setProperty('--g-x', (rand(2, 6) * intensity * sign()).toFixed(1) + 'px');
+      screen.style.setProperty('--g-y', (rand(0, 2.5) * intensity * sign()).toFixed(1) + 'px');
+      screen.style.setProperty('--g-blur', (rand(1, 2.2) * intensity).toFixed(1) + 'px');
+
+      var dur;
+      switch (type) {
+        case 'focus-recover': dur = 1300; break;
+        case 'focus-loss':    dur = Math.round(rand(380, 620)); break;
+        case 'distort':       dur = Math.round(rand(180, 280)); break;
+        case 'bw-flash':      dur = Math.round(rand(420, 620)); break;
+        case 'vhold':         dur = Math.round(rand(380, 560)); break;
+        case 'snow':          dur = Math.round(rand(280, 460)); break;
+        default:              dur = Math.round(rand(180, 320)); // jolt
+      }
+      screen.style.setProperty('--g-dur', dur + 'ms');
+
+      clearGlitchClasses();
+      void screen.offsetWidth;
+      screen.classList.add('crt-glitch--' + type);
+
+      // Snow uses a separate canvas overlay (already outside .crt-screen)
+      if (type === 'snow' && typeof window.__cdatSnowStart === 'function') {
+        window.__cdatSnowStart();
+        setTimeout(function () {
+          if (typeof window.__cdatSnowStop === 'function') window.__cdatSnowStop();
+        }, dur - 40);
+      }
+
+      setTimeout(clearGlitchClasses, dur + 80);
+    }
+
+    // Weighted random pick — softer effects more frequent than disruptive ones.
+    var POOL = [
+      ['focus-loss', 28],
+      ['jolt',       22],
+      ['distort',    14],
+      ['bw-flash',   14],
+      ['vhold',       8],
+      ['snow',       14],
+    ];
+    var POOL_TOTAL = POOL.reduce(function (s, p) { return s + p[1]; }, 0);
+
+    function pickRandomType() {
+      var r = Math.random() * POOL_TOTAL;
+      var acc = 0;
+      for (var i = 0; i < POOL.length; i++) {
+        acc += POOL[i][1];
+        if (r < acc) return POOL[i][0];
+      }
+      return POOL[0][0];
+    }
+
+    function scheduleNext() {
+      // Ambient distortions — rare; primary trigger is now click + nav.
+      var delay = rand(25000, 60000);
+      setTimeout(function () {
+        applyGlitch(pickRandomType(), 1);
+        scheduleNext();
+      }, delay);
+    }
+
+    // Public API for the prototype switcher to trigger any glitch on demand.
+    window.__cdatTriggerGlitch = function (type) {
+      var valid = ['focus-recover', 'focus-loss', 'jolt', 'distort', 'bw-flash', 'vhold', 'snow'];
+      if (valid.indexOf(type) === -1) return;
+      applyGlitch(type, 1);
+    };
+
+    // Click-driven glitches — full pool (snow / B&W / vhold all included).
+    // Throttled so rapid clicks don't spam.
+    var CLICK_POOL = [
+      ['focus-loss', 22],
+      ['jolt',       18],
+      ['distort',    14],
+      ['bw-flash',   16],
+      ['vhold',      12],
+      ['snow',       18],
+    ];
+    var CLICK_CHANCE = 1.0;
+    var CLICK_MIN_GAP_MS = 1500;
+    var lastClickGlitchAt = 0;
+    var lastClickType = null;
+
+    function pickClickType() {
+      // Filter out the type that fired last so consecutive clicks vary.
+      var pool = CLICK_POOL.filter(function (p) { return p[0] !== lastClickType; });
+      var total = pool.reduce(function (s, p) { return s + p[1]; }, 0);
+      var r = Math.random() * total;
+      var acc = 0;
+      for (var i = 0; i < pool.length; i++) {
+        acc += pool[i][1];
+        if (r < acc) {
+          lastClickType = pool[i][0];
+          return pool[i][0];
+        }
+      }
+      lastClickType = pool[0][0];
+      return pool[0][0];
+    }
+
+    function onDocPointer() {
+      var now = performance.now();
+      if (now - lastClickGlitchAt < CLICK_MIN_GAP_MS) return;
+      if (Math.random() > CLICK_CHANCE) return;
+      lastClickGlitchAt = now;
+      applyGlitch(pickClickType(), 0.9);
+    }
+
+    function init() {
+      // Warmup is tied to boot — fires only when boot animation runs.
+      // (Boot itself is session-cached by CyberBgController, so the warmup
+      // chain naturally happens on first visit / variant B / variant C home.)
+      var bootMode = document.documentElement.getAttribute('data-cyber-boot');
+
+      if (bootMode === 'run') {
+        // Full CRT warmup (B&W → color, ~1.3s).
+        // Boot fade-out begins at 88% × 2.6s = 2288ms — start warmup at 2300ms
+        // so by the time boot disappears, the home is already warming up
+        // ("BAM" reveal: monitor inits → counts → boot fades → home in warmup).
+        setTimeout(function () {
+          applyGlitch('focus-recover', 1);
+        }, 2300);
+      } else {
+        // Boot skipped (cached or variant=d) → random brief "channel
+        // switching" feel immediately on page reveal. No full warmup.
+        var TRANSITION_TYPES = ['focus-loss', 'jolt', 'distort', 'bw-flash', 'vhold', 'snow'];
+        var t = TRANSITION_TYPES[Math.floor(Math.random() * TRANSITION_TYPES.length)];
+        applyGlitch(t, 1.0);
+      }
+
+      // Click-driven glitches — use pointerdown for snappier response
+      // (fires when the mouse/finger goes DOWN, before mouseup/click).
+      document.addEventListener('pointerdown', onDocPointer, { capture: true, passive: true });
+
+      // Rare ambient time-based glitches (background noise).
+      setTimeout(scheduleNext, 6000);
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
+  })();
+</script>
