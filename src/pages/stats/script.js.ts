@@ -13,13 +13,13 @@ import type { APIRoute } from 'astro';
 
 export const prerender = false;
 
-// Upstream Plausible container exposed on the VPS host at 127.0.0.1:8001.
-// We hit it via `host.docker.internal` (mapped to host-gateway in compose)
-// because outbound HTTPS to the public plausible.sdet.it URL is firewalled
-// on this container's network bridge.
-// `STATS_UPSTREAM` env var lets local dev override (defaults to the host).
+// We reach Plausible through the shared Docker network (cdat compose
+// joins plausible_default as external) so this container talks directly
+// to the Plausible service by its hostname - no internet, no CF, no
+// firewalled outbound HTTPS to worry about.
+// `STATS_UPSTREAM` env var lets local dev override.
 const UPSTREAM =
-  (import.meta.env.STATS_UPSTREAM ?? 'http://host.docker.internal:8001') +
+  (import.meta.env.STATS_UPSTREAM ?? 'http://plausible-plausible-1:8000') +
   '/js/script.tagged-events.js';
 
 export const GET: APIRoute = async () => {
