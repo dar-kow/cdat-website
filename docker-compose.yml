@@ -25,6 +25,13 @@ services:
       - '127.0.0.1:8092:4399'
     networks:
       - cdat_default
+    # Explicit upstream DNS - Docker's embedded resolver (127.0.0.11) was
+    # timing out on this container, breaking outbound fetch() to upstream
+    # services like the Plausible analytics proxy. Cloudflare + Google
+    # public DNS as redundant resolvers.
+    dns:
+      - 1.1.1.1
+      - 8.8.8.8
     environment:
       NODE_ENV: production
       HOST: 0.0.0.0
