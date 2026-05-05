@@ -13,6 +13,16 @@ export default defineConfig({
   // and runs Node at runtime exclusively for the MCP SSE endpoint.
   output: 'static',
   adapter: node({ mode: 'standalone' }),
+
+  // Disable Astro 5+ default CSRF Origin check globally because the
+  // analytics proxy at /stats/event must accept text/plain POSTs from the
+  // Plausible script (text/plain avoids CORS preflight). Astro's CSRF
+  // blocks form-like Content-Types unless Origin matches, but TLS
+  // termination behind nginx + CF makes the scheme comparison brittle.
+  // Public endpoints (/mcp = read-only, /stats/event = analytics) carry
+  // no CSRF risk on this site.
+  security: { checkOrigin: false },
+
   vite: {
     plugins: [tailwindcss()],
   },

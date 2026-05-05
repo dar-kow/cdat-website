@@ -81,11 +81,12 @@ const gscVerification = import.meta.env.PUBLIC_GSC_VERIFICATION;
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap"
     />
 
-    <!-- Plausible self-hosted analytics - auto-fires events for [data-plausible-event] -->
+    <!-- Plausible self-hosted analytics - same-origin proxy bypasses ad-blockers -->
     <script
       defer
       data-domain="cdat.sdet.it"
-      src="https://plausible.sdet.it/js/script.tagged-events.js"
+      data-api="/stats/event"
+      src="/stats/script.js"
     ></script>
     <script is:inline>
       window.plausible = window.plausible || function () {
