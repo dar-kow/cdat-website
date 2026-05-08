@@ -208,12 +208,18 @@ const isActive = (href: string) => current === href || current.startsWith(`${hre
     .nav-toggle { display: none; }
   }
 
-  /* Mobile drawer */
+  /* Mobile drawer - overlay above content (absolute positioning under sticky nav) */
   .nav-mobile {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 99;
     border-top: 1px solid var(--color-primary-900);
     background: rgba(10, 14, 13, 0.97);
     overflow: hidden;
     animation: nav-mobile-in 200ms ease forwards;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
   }
   .nav-mobile[hidden] { display: none; }
   .nav-mobile ul {
