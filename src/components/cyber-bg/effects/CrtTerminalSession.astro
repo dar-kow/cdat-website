@@ -94,8 +94,11 @@
     .crt-terminal { display: none !important; }
   }
 
-  @media (max-width: 1100px) {
-    /* Hide on smaller screens - would crowd the reading column. */
+  @media (max-width: 1750px) {
+    /* Hide when viewport ≤1750px - terminal needs comfortable margin past
+       content (72rem=1152px) edge before sidebar feels appropriate.
+       Bumped 1100 → 1280 → 1440 → 1700 → 1920 → 1550 → 1750 after
+       content max-w sync to sdet.it (SDE-181) + iterated UX feedback. */
     .crt-terminal { display: none !important; }
   }
 </style>

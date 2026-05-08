@@ -21,37 +21,57 @@ const stats = [
 </section>
 
 <style>
+  /* Full-width band under hero (mirrors sdet.it stats layout). */
   .stats-counter {
-    margin-top: 3rem;
+    padding: 3rem 1rem;
+    border-top: 1px solid var(--color-primary-900);
+    border-bottom: 1px solid var(--color-primary-900);
+    background: rgba(0, 255, 65, 0.02);
   }
   .stats-counter ul {
     list-style: none;
     padding: 0;
-    margin: 0;
+    margin: 0 auto;
+    max-width: var(--max-w);
     display: grid;
     grid-template-columns: 1fr;
-    gap: 1rem;
+    gap: 2rem;
   }
   @media (min-width: 640px) {
-    .stats-counter ul { grid-template-columns: repeat(3, 1fr); }
+    .stats-counter ul { grid-template-columns: repeat(3, 1fr); gap: 1rem; }
   }
   .stats-counter li {
-    border-top: 1px solid var(--color-primary-900);
-    padding-top: 0.75rem;
+    text-align: center;
     font-family: var(--font-mono);
+    position: relative;
+    padding: 0.5rem 1rem;
+  }
+  /* Subtle marker dot - phosphor green, 40% opacity, top-right (mirrors sdet.it). */
+  .stats-counter li::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0.5rem;
+    width: 6px;
+    height: 6px;
+    background: var(--color-primary-500);
+    opacity: 0.4;
   }
   .stats-counter .value {
     display: block;
     font-size: 2.5rem;
     font-weight: 700;
-    color: var(--color-primary-500);
+    color: var(--color-accent-500);
     line-height: 1;
     font-variant-numeric: tabular-nums;
+    letter-spacing: -0.02em;
   }
   .stats-counter .label {
     display: block;
     color: var(--color-gray-500);
     font-size: 0.875rem;
+    text-transform: lowercase;
+    letter-spacing: 0.04em;
     margin-top: 0.5rem;
   }
 </style>

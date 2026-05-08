@@ -8,7 +8,6 @@
 //   - jolt           (~250ms): translate + blur + hue
 //   - distort        (~220ms): hue + saturation + small displacement
 //   - bw-flash       (~520ms): grayscale + brightness pulse, then recover
-//   - vhold          (~480ms): vertical-hold loss - Y bounce + scaleY + blur
 //   - snow           (~360ms): full-screen B&W static noise overlay
 ---
 
@@ -52,14 +51,6 @@
     100% { filter: none; }
   }
 
-  @keyframes crt-vhold {
-    0%   { transform: translate3d(0, -28px, 0) scaleY(0.96); filter: blur(1.5px); }
-    25%  { transform: translate3d(0, -52px, 0) scaleY(1.03); filter: blur(2.2px); }
-    50%  { transform: translate3d(0, 18px, 0) scaleY(0.98); filter: blur(1.4px); }
-    75%  { transform: translate3d(0, -6px, 0) scaleY(1); filter: blur(0.4px); }
-    100% { transform: translate3d(0, 0, 0) scaleY(1); filter: none; }
-  }
-
   @keyframes crt-snow {
     0%   { filter: brightness(0.55) contrast(1.1); }
     50%  { filter: brightness(0.65) contrast(1.05); }
@@ -74,7 +65,6 @@
   .crt-screen.crt-glitch--jolt          { animation: crt-jolt var(--g-dur, 250ms) cubic-bezier(0.2, 0.8, 0.4, 1) forwards; }
   .crt-screen.crt-glitch--distort       { animation: crt-distort var(--g-dur, 220ms) ease-out forwards; }
   .crt-screen.crt-glitch--bw-flash      { animation: crt-bw-flash var(--g-dur, 520ms) ease-in-out forwards; }
-  .crt-screen.crt-glitch--vhold         { animation: crt-vhold var(--g-dur, 480ms) cubic-bezier(0.5, 0, 0.5, 1) forwards; }
   .crt-screen.crt-glitch--snow          { animation: crt-snow var(--g-dur, 360ms) ease-out forwards; }
 
   @media (prefers-reduced-motion: reduce) {
@@ -83,7 +73,6 @@
     .crt-screen.crt-glitch--jolt,
     .crt-screen.crt-glitch--distort,
     .crt-screen.crt-glitch--bw-flash,
-    .crt-screen.crt-glitch--vhold,
     .crt-screen.crt-glitch--snow {
       animation: none !important;
     }
@@ -104,7 +93,6 @@
       'crt-glitch--jolt',
       'crt-glitch--distort',
       'crt-glitch--bw-flash',
-      'crt-glitch--vhold',
       'crt-glitch--snow',
     ];
 
@@ -135,7 +123,6 @@
         case 'focus-loss':    dur = Math.round(rand(380, 620)); break;
         case 'distort':       dur = Math.round(rand(180, 280)); break;
         case 'bw-flash':      dur = Math.round(rand(420, 620)); break;
-        case 'vhold':         dur = Math.round(rand(380, 560)); break;
         case 'snow':          dur = Math.round(rand(280, 460)); break;
         default:              dur = Math.round(rand(180, 320)); // jolt
       }
@@ -162,7 +149,6 @@
       ['jolt',       22],
       ['distort',    14],
       ['bw-flash',   14],
-      ['vhold',       8],
       ['snow',       14],
     ];
     var POOL_TOTAL = POOL.reduce(function (s, p) { return s + p[1]; }, 0);
@@ -188,19 +174,18 @@
 
     // Public API for the prototype switcher to trigger any glitch on demand.
     window.__cdatTriggerGlitch = function (type) {
-      var valid = ['focus-recover', 'focus-loss', 'jolt', 'distort', 'bw-flash', 'vhold', 'snow'];
+      var valid = ['focus-recover', 'focus-loss', 'jolt', 'distort', 'bw-flash', 'snow'];
       if (valid.indexOf(type) === -1) return;
       applyGlitch(type, 1);
     };
 
-    // Click-driven glitches - full pool (snow / B&W / vhold all included).
+    // Click-driven glitches - full pool (snow / B&W included).
     // Throttled so rapid clicks don't spam.
     var CLICK_POOL = [
       ['focus-loss', 22],
       ['jolt',       18],
       ['distort',    14],
       ['bw-flash',   16],
-      ['vhold',      12],
       ['snow',       18],
     ];
     var CLICK_CHANCE = 1.0;
@@ -250,7 +235,7 @@
       } else {
         // Boot skipped (cached or variant=d) → random brief "channel
         // switching" feel immediately on page reveal. No full warmup.
-        var TRANSITION_TYPES = ['focus-loss', 'jolt', 'distort', 'bw-flash', 'vhold', 'snow'];
+        var TRANSITION_TYPES = ['focus-loss', 'jolt', 'distort', 'bw-flash', 'snow'];
         var t = TRANSITION_TYPES[Math.floor(Math.random() * TRANSITION_TYPES.length)];
         applyGlitch(t, 1.0);
       }

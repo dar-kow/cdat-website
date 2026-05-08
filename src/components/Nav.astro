@@ -95,7 +95,7 @@ const isActive = (href: string) => current === href || current.startsWith(`${hre
   }
 
   .cdat-nav-inner {
-    max-width: 64rem;
+    max-width: var(--max-w);
     margin: 0 auto;
     padding: 0.65rem 1rem;
     display: flex;
@@ -220,7 +220,7 @@ const isActive = (href: string) => current === href || current.startsWith(`${hre
     list-style: none;
     margin: 0;
     padding: 0.5rem 1rem;
-    max-width: 64rem;
+    max-width: var(--max-w);
     margin-inline: auto;
   }
   .nav-mobile li + li {

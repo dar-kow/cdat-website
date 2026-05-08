@@ -22,17 +22,17 @@ import { tenureLabel } from '../lib/cdat-tenure';
       <h1 class="hero-title">CDAT <span class="hero-title-accent">Pattern</span></h1>
 
       <p class="tagline">
-        Test architecture for Playwright. Battle-tested across
-        <strong>9 production systems</strong> over <strong>{tenureLabel}</strong>.
+        Test architecture for Playwright.<br />
+        Battle-tested across <strong>9 production systems</strong> over <strong>{tenureLabel}</strong>.
       </p>
 
       <p class="sub-tagline">4 layers · 3 zero-rules · MIT licensed</p>
 
       <CtaStrip />
-      <StatsCounter />
     </div>
   </section>
 
+  <div class="reveal"><StatsCounter /></div>
   <div class="reveal"><ZeroRulesSection /></div>
   <div class="reveal"><CodePreviewSection /></div>
   <div class="reveal"><PomComparisonSection /></div>
@@ -41,7 +41,7 @@ import { tenureLabel } from '../lib/cdat-tenure';
 
 <style>
   .hero {
-    max-width: 64rem;
+    max-width: var(--max-w);
     margin: 0 auto;
     padding: 2.25rem 1rem 2rem;
     display: grid;
@@ -60,15 +60,18 @@ import { tenureLabel } from '../lib/cdat-tenure';
       padding: 5rem 1.5rem 4rem;
       grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
       align-items: center;
+      /* Stretch hero to (almost) viewport - stats band lands at fold,
+         Three Zero Rules waits below scroll. Mirrors sdet.it. */
+      min-height: calc(85vh - 60px);
     }
   }
 
   .hero-title {
     font-family: var(--font-mono);
-    font-size: clamp(2.25rem, 6vw, 3.5rem);
-    line-height: 1.05;
-    letter-spacing: -0.02em;
-    margin: 0;
+    font-size: clamp(2.5rem, 6.5vw, 4.5rem);
+    line-height: 1.04;
+    letter-spacing: -0.025em;
+    margin: 0 0 1.5rem;
     color: var(--color-primary-500);
     font-weight: 700;
   }
@@ -79,18 +82,18 @@ import { tenureLabel } from '../lib/cdat-tenure';
 
   .tagline {
     font-family: var(--font-sans);
-    font-size: clamp(1rem, 2.4vw, 1.25rem);
+    font-size: clamp(1.05rem, 1.6vw, 1.25rem);
     line-height: 1.55;
     color: #cfd8d4;
-    margin: 1rem 0 0.5rem;
+    margin: 0 0 1.25rem;
   }
-  .tagline strong { color: var(--color-accent-500); font-weight: 600; }
+  .tagline strong { color: var(--color-accent-500); font-weight: 500; }
 
   .sub-tagline {
     font-family: var(--font-mono);
     color: var(--color-gray-500);
-    font-size: 0.9rem;
+    font-size: clamp(0.875rem, 1.1vw, 1rem);
     letter-spacing: 0.04em;
-    margin: 0;
+    margin: 0 0 2.25rem;
   }
 </style>

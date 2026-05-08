@@ -48,6 +48,11 @@ const gscVerification = import.meta.env.PUBLIC_GSC_VERIFICATION;
     <link rel="canonical" href={canonicalUrl} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="theme-color" content="#0a0e0d" />
+
+    <!-- Shared brand tokens (single source from sdet.it ecosystem).
+         Local tokens.css remains as build-time fallback for Tailwind theme bridge.
+         Spec: docs/superpowers/specs/2026-05-08-brand-tokens-unification-design.md -->
+    <link rel="stylesheet" href="https://sdet.it/brand-tokens.css" />
     {gscVerification && <meta name="google-site-verification" content={gscVerification} />}
 
     <meta property="og:title" content={title} />
