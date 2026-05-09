@@ -98,3 +98,10 @@ jobs:
       - name: Prune old images
         if: success()
         run: docker image prune -f --filter "until=168h"
+
+      - name: Notify Discord
+        if: always()
+        uses: darco81/gha-actions/notify-discord@v1
+        with:
+          webhook-url: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          app: cdat-website
